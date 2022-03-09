@@ -58,7 +58,7 @@ def circuit_subroutine(qc, control_qubits, target_qubits, bit):
         for i in range(len(bit)):
             if bit[i] == '1':
                 qc.x([control_qubits[0] + i])
-        qc.barrier()
+    qc.barrier()
     return qc
 
 
@@ -118,3 +118,4 @@ if __name__ == "__main__":
     qubit_partitions = setpartition_to_list(partition)
     circuit = aritra_dar_causality( aritra_dar_dimension , qubit_partitions )
     print(circuit)
+    print(circuit.qasm())
