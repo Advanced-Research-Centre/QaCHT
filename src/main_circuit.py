@@ -66,15 +66,27 @@ def cbell(control_no):
     """
     Input:
     ------
-    control_no = numebr of control qubits
+    control_no = number of control qubits
     Output:
     -------
-    return Bell's Unitary.
+    Controlled Bell's Unitary.
     """
     qc_ent = QuantumCircuit(2)
     qc_ent.h([0])
     qc_ent.cx([0], [1])
-    gate = qc_ent.to_gate(label = 'Bell Unitary').control(control_no)
+    gate = qc_ent.to_gate(label = 'C-Bell Unitary').control(control_no)
+    return gate
+
+def bell():
+    """
+    Output:
+    -------
+    Bell's Unitary.
+    """
+    qc_ent = QuantumCircuit(2)
+    qc_ent.h([0])
+    qc_ent.cx([0], [1])
+    gate = qc_ent.to_gate(label = 'Bell Unitary')
     return gate
 
 
@@ -91,11 +103,12 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
     Aritra dar causality hypothesis circuit
     """
     control_no = int( np.ceil( np.log2( aritra_dar_dimension ) ) )
-    qc = QuantumCircuit( aritra_dar_dimension + control_no )
+    qc = QuantumCircuit( 2*aritra_dar_dimension + control_no )
+
     target_qubits_total = qubit_partitions
     control_qubits = []
     for el in range(control_no):
-        control_qubits.append( aritra_dar_dimension + el )
+        control_qubits.append( 2*aritra_dar_dimension + el )
     
     num = 0
     t = target_qubits_total[0][0]
@@ -108,14 +121,34 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
             num +=1
             bit = format(num, f'0{control_no}b')
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
+    
+    bell_unitary = bell()
+    for causal_q in range(aritra_dar_dimension):
+        qc.append( bell_unitary, [ causal_q, causal_q + aritra_dar_dimension ] )
     return qc
 
+def aritra_dar_dosha( aritra_der_bortoni ):
+    """
+    Input:
+    ------
+    aritra_der_bortoni = Is besically the causally connected circuit which is decomposed into
+    A,B, and C subsystems. "C" subsystem is connect to subsystem "B" with 2-controlled Bell's Unitary
+    and the subsystem "A" is connected to the subsystem "B" by Bell's Unitaries.
+
+    Output:
+    -------
+    aritra_der_dosha = Is basically the statevector from the causally connected circuit.
+    """
+    simulator = Aer.get_backend('statevector_simulator')
+    result = execute(aritra_der_bortoni, simulator).result()
+    return result.get_statevector( aritra_der_bortoni )
 
 if __name__ == "__main__":
-
+    
     aritra_dar_dimension = 4
-    partition = list(setpartition(list(range(aritra_dar_dimension))))
+    partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
     qubit_partitions = setpartition_to_list(partition)
-    circuit = aritra_dar_causality( aritra_dar_dimension , qubit_partitions )
-    print(circuit)
-    print(circuit.qasm())
+    aritra_der_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions )
+    print(aritra_der_bortoni)
+    aritra_chiribella_dosha = aritra_dar_dosha(  aritra_der_bortoni ) 
+    print( aritra_chiribella_dosha )
