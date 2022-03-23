@@ -1,8 +1,9 @@
-from qiskit import *
-from qiskit import Aer
+from qiskit import QuantumCircuit, Aer, execute
 import numpy as np
 from itertools import combinations
+from math import ceil, log2
 
+###############################################################################################
 
 def setpartition(iterable, n=2):
     iterable = list(iterable)
@@ -16,26 +17,59 @@ def setpartition(iterable, n=2):
         else:
             yield partition
 
-
-def setpartition_to_list(setpartition):
+def setpartition_to_list(partition):
     """
     Input:
     ------
-    setpartition: A permutation of causally connected qubits in form of sets.
+    partition: A permutation of causally connected qubits in form of sets.
     
     Output:
+    ------
     A conversion to list of the set of permutations. 
-
     """
     qubit_partitions = []
-    for el in list(setpartition):
+    for el in list(partition):
         small_list = []
         for no in range(len(el)):
             small_list.append( list(el[no]) )
         qubit_partitions.append(small_list)
     return qubit_partitions
 
-def circuit_subroutine(qc, control_qubits, target_qubits, bit):
+###############################################################################################
+
+def causal_oracle(hypothesis_id = 0):
+    """
+    Output:
+    -------
+    The Causal Hypothesis Oracle
+    """
+    qc_C = QuantumCircuit(size_hypothesis*num_hypothesis)
+    if hypothesis_id == 0:
+        qc_C.id([0])
+        qc_C.id([1])
+    else:
+        qc_C.swap([0],[1])
+    gate = qc_C.to_gate(label = 'C_'+str(hypothesis_id))
+    return gate
+
+###############################################################################################
+
+def controller_entangler(control_no):
+    """
+    Input:
+    ------
+    control_no = number of control qubits
+    Output:
+    -------
+    Controlled Entangler Unitary.
+    """
+    qc_ent = QuantumCircuit(2)
+    qc_ent.h([0])
+    qc_ent.cx([0], [1])
+    gate = qc_ent.to_gate(label = 'cEnt').control(control_no)
+    return gate
+
+def indexed_entangler(qc, control_qubits, target_qubits, bit):
     """
     Inputs:
     -------
@@ -54,61 +88,20 @@ def circuit_subroutine(qc, control_qubits, target_qubits, bit):
         for i in range(len(bit)):
             if bit[i] == '1':
                 qc.x([control_qubits[0] + i])
-        qc.append( cbell(len(control_qubits)), total )
+        qc.append( controller_entangler(len(control_qubits)), total )
         for i in range(len(bit)):
             if bit[i] == '1':
                 qc.x([control_qubits[0] + i])
     qc.barrier()
     return qc
 
+###############################################################################################
 
-def cbell(control_no):
+def CHT(qb_hypothesis, pairings, hyp):
     """
     Input:
     ------
-    control_no = number of control qubits
-    Output:
-    -------
-    Controlled Bell's Unitary.
-    """
-    qc_ent = QuantumCircuit(2)
-    qc_ent.h([0])
-    qc_ent.cx([0], [1])
-    gate = qc_ent.to_gate(label = 'C-Bell Unitary').control(control_no)
-    return gate
-
-def bell():
-    """
-    Output:
-    -------
-    Bell's Unitary.
-    """
-    qc_ent = QuantumCircuit(2)
-    qc_ent.h([0])
-    qc_ent.cx([0], [1])
-    gate = qc_ent.to_gate(label = 'Bell Unitary')
-    return gate
-
-
-def causal_oracle():
-    """
-    Output:
-    -------
-    Bell's Unitary.
-    """
-    qc_ent = QuantumCircuit(2)
-    qc_ent.swap([0],[1])
-    # qc_ent.id([0])
-    # qc_ent.id([1])
-    gate = qc_ent.to_gate(label = 'C')
-    return gate
-
-
-def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
-    """
-    Input:
-    ------
-    aritra_dar_dimension = number of qubits in causal circuit (Bell connections),
+    qb_hypothesis = number of qubits in causal circuit (Bell connections),
     target_qubits = list of target qubits
     control_qubits = list of control qubits
     
@@ -116,96 +109,79 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
     -------
     Aritra dar causality hypothesis circuit
     """
-    control_no = int( np.ceil( np.log2( aritra_dar_dimension ) ) )
-    qc = QuantumCircuit( 2*aritra_dar_dimension + control_no )
+    control_no = int( np.ceil( np.log2( qb_hypothesis ) ) )
+    qc = QuantumCircuit( 2*qb_hypothesis + control_no )
 
-    target_qubits_total = qubit_partitions
+    target_qubits_total = pairings
     control_qubits = []
     for el in range(control_no):
-        control_qubits.append( 2*aritra_dar_dimension + el )
-        qc.h([2*aritra_dar_dimension+el])
-    
+        control_qubits.append( 2*qb_hypothesis + el )
+        qc.h([2*qb_hypothesis + el])
+    qc.barrier()
+
     num = 0
     t = target_qubits_total[0][0]
     for i in range(len(target_qubits_total)):
         if t == target_qubits_total[i][0]:
             bit = format(num, f'0{control_no}b')
-            circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
+            indexed_entangler(qc, control_qubits, target_qubits_total[i], bit)
         else:
             t = target_qubits_total[i][0]
             num +=1
             bit = format(num, f'0{control_no}b')
-            circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
+            indexed_entangler(qc, control_qubits, target_qubits_total[i], bit)
     
-    c_oracle = causal_oracle()
-    for causal_q in range(aritra_dar_dimension):
-        qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension ] )
+    c_oracle = causal_oracle(hyp)
+    for causal_q in range(qb_hypothesis):
+        qc.append( c_oracle, [ causal_q, causal_q + qb_hypothesis ] )
+    qc.barrier()
     return qc
 
-def aritra_dar_dosha( aritra_der_bortoni ):
+###############################################################################################
+
+def CHT_test(CHT_circuit):
     """
     Input:
     ------
-    aritra_der_bortoni = Is besically the causally connected circuit which is decomposed into
-    A,B, and C subsystems. "C" subsystem is connect to subsystem "B" with 2-controlled Bell's Unitary
-    and the subsystem "A" is connected to the subsystem "B" by Bell's Unitaries.
+    CHT_circuit = Is basically the causally connected circuit which is decomposed into A,B, and C subsystems. 
 
     Output:
     -------
-    aritra_der_dosha = Is basically the statevector from the causally connected circuit.
+    CHT_test = Is basically the statevector from the causally connected circuit.
     """
     simulator = Aer.get_backend('statevector_simulator')
-    result = execute(aritra_der_bortoni, simulator).result()
-    return result.get_statevector( aritra_der_bortoni )
+    result = execute(CHT_circuit, simulator).result()
+    return result.get_statevector(CHT_circuit)
+
+###############################################################################################
 
 if __name__ == "__main__":
     
+    num_hypothesis = 2
+    size_hypothesis = 1
+    num_pairs = 2
+    qb_hypothesis = size_hypothesis*(2*num_pairs)
 
-    aritra_dar_dimension = 4
-    partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
-    qubit_partitions = setpartition_to_list(partition)
-    aritra_der_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions )
-    print(aritra_der_bortoni)
-    aritra_chiribella_dosha = aritra_dar_dosha(  aritra_der_bortoni ) 
+    pairings = setpartition_to_list(list(setpartition(list(range(0, qb_hypothesis)))))
+    # print(pairings)
 
-    for i in range(0,len(aritra_chiribella_dosha)):
-        p = abs(aritra_chiribella_dosha[i])
-        if p > 1e-5:
-            print(bin(i)[2:].zfill(10),p)
+    num_qubits = num_hypothesis*qb_hypothesis + ceil(log2(len(pairings)))
+    # print(num_qubits)
 
-    # print( aritra_chiribella_dosha )
+    for hyp in range(0,num_hypothesis):
+        CHT_circuit = CHT(qb_hypothesis, pairings, hyp)
+        print("Hypothesis ",hyp)
+        print(CHT_circuit)
+        sv = CHT_test(CHT_circuit)
+        print("State Vector ")
+        for i in range(0,len(sv)):
+            p = abs(sv[i])**2
+            if p > 1e-5:
+                print(bin(i)[2:].zfill(10),p)
 
-# SWAP
-    # 00 0000 0000 0.5000000000000004
-    # 01 0000 0000 0.25000000000000017
-    # 01 0000 0101 0.25000000000000033
-    # 01 0000 1010 0.25000000000000044
-    # 01 0000 1111 0.25000000000000044
-    # 10 0000 0000 0.25000000000000017
-    # 10 0000 0110 0.2500000000000002
-    # 10 0000 1001 0.25000000000000017
-    # 10 0000 1111 0.2500000000000002
-    # 11 0000 0000 0.25000000000000044
-    # 11 0000 0011 0.2500000000000006
-    # 11 0000 1100 0.25000000000000044
-    # 11 0000 1111 0.25000000000000056
-# IDENTITY
-    # 00 0000 0000 0.5000000000000004
-    # 01 0000 0000 0.25000000000000017
-    # 01 0101 0000 0.25000000000000033
-    # 01 1010 0000 0.25000000000000044
-    # 01 1111 0000 0.25000000000000044
-    # 10 0000 0000 0.25000000000000017
-    # 10 0110 0000 0.2500000000000002
-    # 10 1001 0000 0.25000000000000017
-    # 10 1111 0000 0.2500000000000002
-    # 11 0000 0000 0.25000000000000044
-    # 11 0011 0000 0.2500000000000006
-    # 11 1100 0000 0.25000000000000044
-    # 11 1111 0000 0.25000000000000056
+###############################################################################################
 
 '''
-    TODO------
     - measure only A (Z-basis)
     - check measure statistics 
     - compare between swap/identity
