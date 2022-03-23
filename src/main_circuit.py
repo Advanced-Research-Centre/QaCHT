@@ -90,6 +90,20 @@ def bell():
     return gate
 
 
+def causal_oracle():
+    """
+    Output:
+    -------
+    Bell's Unitary.
+    """
+    qc_ent = QuantumCircuit(2)
+    qc_ent.swap([0],[1])
+    # qc_ent.id([0])
+    # qc_ent.id([1])
+    gate = qc_ent.to_gate(label = 'C')
+    return gate
+
+
 def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
     """
     Input:
@@ -109,6 +123,7 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
     control_qubits = []
     for el in range(control_no):
         control_qubits.append( 2*aritra_dar_dimension + el )
+        qc.h([2*aritra_dar_dimension+el])
     
     num = 0
     t = target_qubits_total[0][0]
@@ -122,9 +137,9 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
             bit = format(num, f'0{control_no}b')
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
     
-    bell_unitary = bell()
+    c_oracle = causal_oracle()
     for causal_q in range(aritra_dar_dimension):
-        qc.append( bell_unitary, [ causal_q, causal_q + aritra_dar_dimension ] )
+        qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension ] )
     return qc
 
 def aritra_dar_dosha( aritra_der_bortoni ):
@@ -145,10 +160,53 @@ def aritra_dar_dosha( aritra_der_bortoni ):
 
 if __name__ == "__main__":
     
+
     aritra_dar_dimension = 4
     partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
     qubit_partitions = setpartition_to_list(partition)
     aritra_der_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions )
     print(aritra_der_bortoni)
     aritra_chiribella_dosha = aritra_dar_dosha(  aritra_der_bortoni ) 
-    print( aritra_chiribella_dosha )
+
+    for i in range(0,len(aritra_chiribella_dosha)):
+        p = abs(aritra_chiribella_dosha[i])
+        if p > 1e-5:
+            print(bin(i)[2:].zfill(10),p)
+
+    # print( aritra_chiribella_dosha )
+
+# SWAP
+    # 00 0000 0000 0.5000000000000004
+    # 01 0000 0000 0.25000000000000017
+    # 01 0000 0101 0.25000000000000033
+    # 01 0000 1010 0.25000000000000044
+    # 01 0000 1111 0.25000000000000044
+    # 10 0000 0000 0.25000000000000017
+    # 10 0000 0110 0.2500000000000002
+    # 10 0000 1001 0.25000000000000017
+    # 10 0000 1111 0.2500000000000002
+    # 11 0000 0000 0.25000000000000044
+    # 11 0000 0011 0.2500000000000006
+    # 11 0000 1100 0.25000000000000044
+    # 11 0000 1111 0.25000000000000056
+# IDENTITY
+    # 00 0000 0000 0.5000000000000004
+    # 01 0000 0000 0.25000000000000017
+    # 01 0101 0000 0.25000000000000033
+    # 01 1010 0000 0.25000000000000044
+    # 01 1111 0000 0.25000000000000044
+    # 10 0000 0000 0.25000000000000017
+    # 10 0110 0000 0.2500000000000002
+    # 10 1001 0000 0.25000000000000017
+    # 10 1111 0000 0.2500000000000002
+    # 11 0000 0000 0.25000000000000044
+    # 11 0011 0000 0.2500000000000006
+    # 11 1100 0000 0.25000000000000044
+    # 11 1111 0000 0.25000000000000056
+
+'''
+    TODO------
+    - measure only A (Z-basis)
+    - check measure statistics 
+    - compare between swap/identity
+'''
