@@ -2,7 +2,7 @@ from qiskit import *
 from qiskit import Aer
 import numpy as np
 from itertools import combinations
-
+import pickle
 
 def setpartition(iterable, n=2):
     iterable = list(iterable)
@@ -90,21 +90,23 @@ def bell():
     return gate
 
 
-def causal_oracle():
+def causal_oracle(opt):
     """
     Output:
     -------
     Bell's Unitary.
     """
     qc_ent = QuantumCircuit(2)
-    qc_ent.swap([0],[1])
-    # qc_ent.id([0])
-    # qc_ent.id([1])
+    if opt == 'swap':
+        qc_ent.swap([0],[1])
+    elif opt == 'identity':
+        qc_ent.id([0])
+        qc_ent.id([1])
     gate = qc_ent.to_gate(label = 'C')
     return gate
 
 
-def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
+def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta ):
     """
     Input:
     ------
@@ -125,6 +127,9 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
         control_qubits.append( 2*aritra_dar_dimension + el )
         qc.h([2*aritra_dar_dimension+el])
     
+    for q_rot in range(aritra_dar_dimension):
+        qc.ry( theta, q_rot )
+
     num = 0
     t = target_qubits_total[0][0]
     for i in range(len(target_qubits_total)):
@@ -137,7 +142,7 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions ):
             bit = format(num, f'0{control_no}b')
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
     
-    c_oracle = causal_oracle()
+    c_oracle = causal_oracle(opt)
     for causal_q in range(aritra_dar_dimension):
         qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension ] )
     return qc
@@ -162,18 +167,25 @@ if __name__ == "__main__":
     
 
     aritra_dar_dimension = 4
+    list_opts = [ 'swap', 'identity' ]
+    total_qubit_required = 2*aritra_dar_dimension + int( np.ceil( np.log2( aritra_dar_dimension ) ) )
     partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
     qubit_partitions = setpartition_to_list(partition)
-    aritra_der_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions )
-    print(aritra_der_bortoni)
-    aritra_chiribella_dosha = aritra_dar_dosha(  aritra_der_bortoni ) 
 
-    for i in range(0,len(aritra_chiribella_dosha)):
-        p = abs(aritra_chiribella_dosha[i])
-        if p > 1e-5:
-            print(bin(i)[2:].zfill(10),p)
-
-    # print( aritra_chiribella_dosha )
+    for theta in np.arange(0, 2*np.pi, 0.02):
+        for opt in list_opts:
+            dict_prob = {}
+            print(f'{opt} before output for angle {theta}')
+            print('--------------')
+            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta )
+            aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni ) 
+            for i in range(len(aritra_chiribella_dosha)):
+                p = abs(aritra_chiribella_dosha[i])
+                if p > 1e-5:
+                    dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p**2
+            file = f'data/{opt}_dict_prob_{theta}.p'
+            with open(file, 'wb') as handle:
+                pickle.dump(dict_prob, handle)
 
 # SWAP
     # 00 0000 0000 0.5000000000000004
