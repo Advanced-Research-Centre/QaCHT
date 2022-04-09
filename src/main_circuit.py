@@ -106,7 +106,7 @@ def causal_oracle(opt):
     return gate
 
 
-def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta ):
+def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta, gate ):
     """
     Input:
     ------
@@ -128,7 +128,12 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta ):
         qc.h([2*aritra_dar_dimension+el])
     
     for q_rot in range(aritra_dar_dimension):
-        qc.ry( theta, q_rot )
+        if gate == 'rx':
+            qc.rx( theta, q_rot )
+        elif gate == 'ry':
+            qc.ry( theta, q_rot )
+        elif gate == 'rz':
+            qc.rz( theta, q_rot )
 
     num = 0
     t = target_qubits_total[0][0]
@@ -171,19 +176,21 @@ if __name__ == "__main__":
     total_qubit_required = 2*aritra_dar_dimension + int( np.ceil( np.log2( aritra_dar_dimension ) ) )
     partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
     qubit_partitions = setpartition_to_list(partition)
+    gate = 'ry'
 
     for theta in np.arange(0, 2*np.pi, 0.02):
         for opt in list_opts:
             dict_prob = {}
             print(f'{opt} before output for angle {theta}')
             print('--------------')
-            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta )
+            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta, gate )
+            # print(aritra_dar_bortoni)
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni ) 
             for i in range(len(aritra_chiribella_dosha)):
                 p = abs(aritra_chiribella_dosha[i])
                 if p > 1e-5:
                     dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p**2
-            file = f'data/{opt}_dict_prob_{theta}.p'
+            file = f'data/{opt}_dict_prob_{theta}_initialization_{gate}.p'
             with open(file, 'wb') as handle:
                 pickle.dump(dict_prob, handle)
 
