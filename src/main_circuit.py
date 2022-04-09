@@ -147,9 +147,11 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta, g
             bit = format(num, f'0{control_no}b')
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
     
+    # for _ in range(oracle_repeation):
     c_oracle = causal_oracle(opt)
     for causal_q in range(aritra_dar_dimension):
         qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension ] )
+    
     return qc
 
 def aritra_dar_dosha( aritra_der_bortoni ):
@@ -184,7 +186,8 @@ if __name__ == "__main__":
             print(f'{opt} before output for angle {theta}')
             print('--------------')
             aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, theta, gate )
-            # print(aritra_dar_bortoni)
+            print(aritra_dar_bortoni)
+            exit()
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni ) 
             for i in range(len(aritra_chiribella_dosha)):
                 p = abs(aritra_chiribella_dosha[i])

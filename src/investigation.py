@@ -1,3 +1,5 @@
+from cProfile import label
+from cmath import log
 from main_circuit import *
 import matplotlib.pyplot as plt
 
@@ -30,22 +32,30 @@ def distinguishing_probability(theta, gate):
 
 if __name__ == "__main__":
 
-    
+    calculate = 'prob'
     gate_list = [ 'rx' , 'ry', 'rz' ]
     line_opt = [ 'r--x', 'b--o', 'g--' ]
     for gateno, gate in enumerate(gate_list):
-        list_prob = []
+        list_data = []
         list_angle = []
         for theta in np.arange(0, 2*np.pi, 0.02):
             prob = distinguishing_probability(theta, gate)
-            list_prob.append(prob)
             list_angle.append(theta)
+            if calculate == 'rate':
+                rate = -log(prob)
+                list_data.append(rate)
+            elif calculate == 'prob':
+                list_data.append(prob)
         
-        plt.plot( list_angle, list_prob, line_opt[gateno], label = f'{gate}' )
+        plt.plot( list_angle, list_data, line_opt[gateno], label = f'{gate}' )
         plt.xlabel( f'Angle', fontsize = 12 )
+    if calculate == 'rate':
+        plt.plot( list_angle, [0.60205999132]*len(list_angle), 'k-', label = 'chiribella calculation' )
+        plt.ylabel('Discrimination rate', fontsize=12)
+    elif calculate == 'prob':
+        plt.ylabel( 'Hypothesis distinguishing probability', fontsize = 12 )
     
     plt.legend()
-    plt.ylabel( 'Hypothesis distinguishing probability', fontsize = 12 )
-    plt.savefig( 'plot/hypothesis_distinguishing_probability.pdf' )
-    plt.savefig( 'plot/hypothesis_distinguishing_probability.png' )
+    plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.pdf' )
+    plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.png' )
     plt.show()
