@@ -3,10 +3,10 @@ from cmath import log
 from main_circuit import *
 import matplotlib.pyplot as plt
 
-def distinguishing_probability(theta, gate):
-    list_opts = [ 'swap', 'identity' ]
-    dict_swap = pickle.load(open(f'data/{list_opts[0]}_dict_prob_{theta}_initialization_{gate}.p', "rb"))
-    dict_identity = pickle.load(open(f'data/{list_opts[1]}_dict_prob_{theta}_initialization_{gate}.p', "rb"))
+def distinguishing_probability(gate, theta_init, theta_oracle):
+    list_opts = [ 'cry', 'identity' ]
+    dict_swap = pickle.load(open(f'data/{list_opts[0]}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}.p', "rb"))
+    dict_identity = pickle.load(open(f'data/{list_opts[1]}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}.p', "rb"))
 
     list_key_swap = []
     list_key_identity = []
@@ -33,29 +33,41 @@ def distinguishing_probability(theta, gate):
 if __name__ == "__main__":
 
     calculate = 'prob'
-    gate_list = [ 'rx' , 'ry', 'rz' ]
-    line_opt = [ 'r--x', 'b--o', 'g--' ]
-    for gateno, gate in enumerate(gate_list):
-        list_data = []
-        list_angle = []
-        for theta in np.arange(0, 2*np.pi, 0.02):
-            prob = distinguishing_probability(theta, gate)
-            list_angle.append(theta)
-            if calculate == 'rate':
-                rate = -log(prob)
-                list_data.append(rate)
-            elif calculate == 'prob':
-                list_data.append(prob)
-        
-        plt.plot( list_angle, list_data, line_opt[gateno], label = f'{gate}' )
-        plt.xlabel( f'Angle', fontsize = 12 )
-    if calculate == 'rate':
-        plt.plot( list_angle, [0.60205999132]*len(list_angle), 'k-', label = 'chiribella calculation' )
-        plt.ylabel('Discrimination rate', fontsize=12)
-    elif calculate == 'prob':
-        plt.ylabel( 'Hypothesis distinguishing probability', fontsize = 12 )
+    gate_list = 'had' #, 'ry', 'rz' ]
+    if gate_list == 'had':
+        theta_init_list = [0]
+    else:
+        theta_init_list = np.arange(0, 2*np.pi, 0.5)
     
-    plt.legend()
-    plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.pdf' )
-    plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.png' )
-    plt.show()
+    theta_oracle_list = np.arange(0, 2*np.pi, 0.2)
+    line_opt = [ 'r--x', 'b--o', 'g--' ]
+    for gateno, gate in enumerate([gate_list]):
+        for theta_init in theta_init_list:
+            list_data = []
+            list_angle = []
+            for theta_oracle in theta_oracle_list:
+                theta_init = round(theta_init, 2)
+                theta_oracle = round(theta_oracle, 2)
+                prob = 1 - distinguishing_probability(gate, theta_init, theta_oracle)
+                list_angle.append(theta_oracle)
+                if calculate == 'rate':
+                    rate = -log(prob)/4
+                    list_data.append(rate)
+                elif calculate == 'prob':
+                    list_data.append(prob)
+
+        
+            plt.plot( list_angle, list_data, line_opt[gateno], label = f'{gate}' )
+            plt.xlabel( f'Angle', fontsize = 12 )
+        if calculate == 'rate':
+            plt.plot( list_angle, [0.60205999132]*len(list_angle), 'ko', label = 'chiribella disrimination rate' )
+            plt.ylabel('Discrimination rate', fontsize=12)
+        elif calculate == 'prob':
+            chiribella_error_prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))
+            plt.plot( list_angle, [chiribella_error_prob]*len(list_angle), 'ko', label = 'chiribella error' )
+            plt.ylabel( 'Error probability', fontsize = 12 )
+        
+        plt.legend()
+        plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.pdf' )
+        plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.png' )
+        plt.show()
