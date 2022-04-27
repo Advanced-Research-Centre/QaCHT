@@ -77,6 +77,16 @@ def cbell(control_no):
     gate = qc_ent.to_gate(label = 'C-Bell Unitary').control(control_no)
     return gate
 
+def oracle_type(theta, type):
+    qc = QuantumCircuit(2)
+    if type == 'cry':
+        qc.cry(theta, [0], [1])
+    else:
+        qc.id([0])
+        qc.id([1])
+    
+    return qc
+
 def bell():
     """
     Output:
@@ -188,9 +198,9 @@ if __name__ == "__main__":
     if gate == 'had':
         theta_init_list = [0]
     else:
-        theta_init_list = np.arange(0, 2*np.pi, 0.5)
+        theta_init_list = np.arange(0, 4*np.pi, 0.5)
     
-    theta_oracle_list = np.arange(0, 2*np.pi, 0.2)
+    theta_oracle_list = np.arange(0, 4*np.pi, 0.5)
 
     for theta_init in theta_init_list:
         for theta_oracle in theta_oracle_list:

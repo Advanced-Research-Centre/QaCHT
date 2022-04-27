@@ -3,10 +3,12 @@ from cmath import log
 from turtle import color
 from main_circuit import *
 import matplotlib.pyplot as plt
+from qiskit.quantum_info.operators import Operator, process_fidelity
+from qiskit.quantum_info.operators import Chi, Choi
 
-def distinguishing_probability(list_opt, gate, theta_init, theta_oracle):
-    dict_swap = pickle.load(open(f'data/{list_opts[0]}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}_prob.p', "rb"))
-    dict_identity = pickle.load(open(f'data/{list_opts[1]}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}_prob.p', "rb"))
+def distinguishing_probability(list_opts, gate, theta_init, theta_oracle):
+    dict_swap = pickle.load(open(f'data/{list_opts[0]}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}.p', "rb"))
+    dict_identity = pickle.load(open(f'data/{list_opts[1]}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}.p', "rb"))
 
     list_key_swap = []
     list_key_identity = []
@@ -33,7 +35,7 @@ def distinguishing_probability(list_opt, gate, theta_init, theta_oracle):
 if __name__ == "__main__":
 
     fig, ax = plt.subplots()
-    theta_range = np.arange(0, 2*np.pi, 0.2)
+    theta_range = np.arange(0, 4*np.pi, 0.5)
     total_list_opts = [ [ 'cry', 'identity' ] ] #, [ 'swap', 'identity' ] ]
     calculate = 'prob'
     gate_list = 'had'
@@ -81,7 +83,7 @@ if __name__ == "__main__":
     for theta_init in theta_range:
         qc_cry = oracle_type(theta_init, 'cry')
         cry_chi_op = Operator(Chi(qc_cry).data)
-        process_distance = process_fidelity( id_chi_op, cry_chi_op )
+        process_distance = 1 - process_fidelity( id_chi_op, cry_chi_op )
         process_dist.append( process_distance )
     
     ax2.plot( theta_range, process_dist, 'b-x', label = '[cry, id] process distance' )
