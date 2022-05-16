@@ -32,16 +32,20 @@ def DeltaHS(dm_i, dm_j):
 if __name__ == "__main__":
     qc_id = oracle_type(0, 'id') 
     id_choi_mat = Choi(qc_id).data
-    theta_range = np.arange(0, 4*np.pi, 0.2)
+    mxd_choi_mat = np.eye(len(id_choi_mat))/len(id_choi_mat)
+    theta_range = np.arange(0, 8*np.pi, 0.2)
     d1 = []
     d2 = []
     d3 = []
     for t in theta_range:
         qc_cry = oracle_type(t, 'cry')
         cry_choi_op = Choi(qc_cry).data
-        dist1 = DeltaT(id_choi_mat,cry_choi_op)
-        dist2 = DeltaB(id_choi_mat,cry_choi_op)
-        dist3 = DeltaHS(id_choi_mat,cry_choi_op)
+        # dist1 = DeltaT(id_choi_mat,cry_choi_op)
+        # dist2 = DeltaB(id_choi_mat,cry_choi_op)
+        # dist3 = DeltaHS(id_choi_mat,cry_choi_op)
+        dist1 = DeltaT(mxd_choi_mat,cry_choi_op)
+        dist2 = DeltaB(mxd_choi_mat,cry_choi_op)
+        dist3 = DeltaHS(mxd_choi_mat,cry_choi_op)
         d1.append(dist1)
         d2.append(dist2)
         d3.append(dist3)
@@ -49,7 +53,8 @@ if __name__ == "__main__":
     plt.plot(theta_range, d1, label = "trace", linestyle="-")
     plt.plot(theta_range, d2, label = "bures", linestyle="-")
     plt.plot(theta_range, d3, label = "hilbert-schmidt", linestyle="-")
-    plt.ylabel("Process Distance of Choi CRY(theta) and Choi IxI")
+    # plt.ylabel("Process Distance of Choi CRY(theta) and Choi IxI")
+    plt.ylabel("Process Distance of Choi CRY(theta) and Choi mixed")
     plt.xlabel("theta")
     plt.legend()
     plt.show()
