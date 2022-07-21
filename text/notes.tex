@@ -1,0 +1,76 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[]{qcircuit}
+
+
+\begin{document}
+
+\title{Quantum speedup in testing causal hypotheses: Nutshell}
+\author{aqasch}
+\date{}
+\maketitle
+\section{Introduction}
+To test hypothesis about the causal structure in a setting where we have different \textit{prior hypothesis} of how we infer a bunch of variables are causally related to each other. \textbf{We aim to find which hypothesis is the correct one among the set of prior considerations}.
+
+\subsection{Test} To causal hypothesis one need to emphasize an allotted role of intervention and how it is important to plan carefully the interventions in order to maximize our chances to find out the right hypothesis.
+
+\subsection{Causality} For a set of variables in $A$ and in $B$, we can say \textbf{$A$ is a cause for $B$} if and only if \textbf{our ability to intervene $A$ has a visible effect on the statistics of $B$}.
+
+\subsection{Caveat} Famous conclusion says \textbf{``Correlation does not imply Causation"}. So it is not enough to study the natural correlations between variables in order to establish a causal link. \textbf{Hence it is important to be able to test and probe different causal settings} as \textit{single joint probability distribution is not enough for that}.
+
+\subsection{Recent advances in quantum}
+Recent advances in ``causal relation" and ``causal networks" to quantum theory and beyond considers the \textbf{causal variables as physical systems}. The causal relations are defined as \textbf{$A$ is a cause for $B$ if changing the parameters of the state of $A$ induces a change of the state $B$}.
+
+\subsection{Could you please motivate me to invest my precious time in this quantum extension?}
+Sure! So there are foundational and practical reasons. Follow me as I say
+\begin{itemize}
+	\item There are some well known quantum features such as \textbf{superposition}, \textbf{entanglement}, \textbf{nonlocality} and not-so-well known quantum features like \textbf{contextuality}. And there are some features that are involved in discovering causal relationships. 
+	
+	\textbf{Finding the relation between quantum and causal-relation discovering features may help us to get better insight to a theory that combine important role of causality and quantum} $\rightarrow$ \textbf{\textcolor{red}{QUANTUM GRAVITY}}.
+	
+	\item It would be fascinating to \textbf{axiomatize quantum theory which has something to do with ability to distinguish between causal relationships}.
+	
+	\item \textbf{To identify working principles for a new quantum device}. Also, to develop a technology for quantum causality.
+\end{itemize}
+
+
+\subsection{An Example}
+To distinguish between
+\begin{itemize}
+	\item \textcolor{red}{1st hypothesis:} \textbf{$A$ causes $B$}
+	\begin{equation}
+		\Qcircuit @C=1em @R=.7em {
+			& \multigate{1}{\rho} & \gate{\mathcal{M}_a} & \multigate{1}{\mathcal{C}} & \gate{\mathcal{N}_b} & \gate{\text{Tr}} \\
+			& \ghost{\rho} & \qw & \ghost{\mathcal{C}}
+		}\nonumber	
+	\end{equation}
+	The variables are distinguished in two parts \textit{input} and \textit{output}. Whatever comes from $\mathcal{M}_a$ (which is our choice of measurement on $a$) causes $b$ i.e. it effects the measurement outcome of $b$ presented through $\mathcal{N}_b$.
+	\item \textcolor{red}{2nd hypothesis:} \textbf{$A$ and $B$ have a common cause}
+	\begin{equation}
+	\Qcircuit @C=1em @R=.7em {
+		& \multigate{1}{\rho} & \gate{\mathcal{M}_a}  & \gate{\text{Tr}} \\
+		& \ghost{\rho} & \gate{\mathcal{N}_b} & \gate{\text{Tr}}
+	}\nonumber	
+	\end{equation}
+	It means there was a physical system prepared and the two measurements $\mathcal{M}_a$ and $\mathcal{N}_b$ are acting parallel on two different subsystems.
+\end{itemize}
+\subsubsection{Solution}
+\textbf{1st situation:} Consider in \textcolor{red}{1st hypothesis} $\mathcal{C}=\mathcal{I}$ i.e. identity. Then if $\mathcal{M}_a$ and $\mathcal{N}_b$ are the same projective measurement then we expect to observe the same outcome. And by investigating this correlation over all possible measurements we can be assured that we are in \textcolor{red}{1st hypothesis}. It is not possible in \textcolor{red}{2nd hypothesis}.
+\\
+
+\noindent\textbf{2nd situation:} If we use the same orthogonal measurement in \textcolor{red}{2nd hypothesis} then we will observe perfect anti-correlation. i.e. if $\mathcal{M}_a=0$ then $\mathcal{N}_b=1$. If this appears for each and every possible setting then we can conclude that $A$ and $B$ are of common cause.
+\\
+
+\noindent \textbf{Conclusion:} For a specific $\rho$ and $\mathcal{C}$ it is possible to distinguish between \textcolor{red}{1st} and \textcolor{red}{2nd hypothesis} using only \textit{projective measurements}.
+In the \textcolor{red}{hypothesis} by scanning the two projective measurements $\mathcal{M}_a$ and $\mathcal{N}_b$ over all possible settings we can reach the above conclusion.
+\\
+
+\noindent\textbf{Classical:} In projective classical measurement we really see the value of a variable and we do not change it. So in classical theory we would have no way to to distinguish two hypothesis.
+
+\subsection{Question}
+The type of advantage we show above is restricted to the specific kinds of allowed measurements where \textbf{classical theory is restricted to passive observational strategies} and no intervention is allowed.
+
+\noindent\textbf{\textcolor{red}{Can we find the advanrage in a situation where arbitrary interventions are allowed?}}
+\end{document}
