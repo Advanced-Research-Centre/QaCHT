@@ -2,7 +2,7 @@
 \usepackage{fullpage}
 \usepackage{amsmath}
 \usepackage{xcolor}
-\usepackage[]{qcircuit}
+\usepackage{qcircuit}
 
 
 \begin{document}
@@ -72,5 +72,64 @@ In the \textcolor{red}{hypothesis} by scanning the two projective measurements $
 \subsection{Question}
 The type of advantage we show above is restricted to the specific kinds of allowed measurements where \textbf{classical theory is restricted to passive observational strategies} and no intervention is allowed.
 
-\noindent\textbf{\textcolor{red}{Can we find the advanrage in a situation where arbitrary interventions are allowed?}}
+\noindent\textbf{\textcolor{red}{Can we find the advantage in a situation where arbitrary interventions are allowed?}}
+
+\subsection{Causal discovery vs Causal hypothesis testing}
+In \textbf{Causal discovery} we have variables as \textit{input} and we get a causal relation among them as \textit{output}.
+\\
+\noindent In \textbf{Causal hypothesis testing} we have variables and a \textit{set of hypothesis on causal relations among them} as \textit{input} and we get correct hypothesis as \textit{output}.
+
+\section{Causal Hypothesis}
+Two causal hypothesis
+\begin{itemize}
+\item \textbf{$A$ causes $B$ but not $C$}
+\begin{equation}
+\Qcircuit @C=1em @R=0.6em {
+	 \lstick{} & \multigate{1}{\mathcal{C}} & \qw & B \\
+	 \lstick{} & \ghost{\mathcal{C}}  &  & C
+	 \inputgroup{1}{2}{.75em}{A}}
+ \nonumber	
+\end{equation}
+\item \textbf{$A$ causes $C$ but not $B$}
+\begin{equation}
+\Qcircuit @C=1em @R=0.6em {
+	\lstick{} & \multigate{1}{\mathcal{C}} & & B \\
+	\lstick{} & \ghost{\mathcal{C}}  & \qw & C
+	\inputgroup{1}{2}{.75em}{A}}
+\nonumber	
+\end{equation}
+\end{itemize}
+This is also called \textcolor{red}{signaling vs no-signaling condition}.
+\\
+\textbf{The causal hypothesis can be formulated independently of the underlying theory}. The theory can be either classical or quantum or some fictional theory and still the question of distinguishing hypothesis makes sense.
+\subsection{Testing Causal Hypothesis}
+As an experiment one can probe the same process for a finite number of times in between performing arbitrary interventions. By considering 
+\begin{equation}
+\mathcal{HP} =\;\;\;\;\;\;\
+\Qcircuit @C=1em @R=0.6em {
+	\lstick{} & \multigate{1}{\mathcal{C}} & & B \\
+	\lstick{} & \ghost{\mathcal{C}}  &  & C
+	\inputgroup{1}{2}{.75em}{A}}
+\nonumber	
+\end{equation}
+the most general intervention is given by
+\begin{equation}
+\Qcircuit @C=1em @R=.7em {
+	& \multigate{1}{\rho} & \gate{\mathcal{HP}} & \multigate{1}{\mathcal{D}_1} & \gate{\mathcal{HP}} & \multigate{1}{\mathcal{D}_2} & \cdots & & \gate{\mathcal{HP}} & \multigate{1}{\mathcal{P}_x} \\
+	& \ghost{\rho} & \qw & \ghost{\mathcal{D}_1} & \qw & \ghost{\mathcal{D}_2} & \cdots & & \qw & \ghost{\mathcal{P}_x}
+}\nonumber	
+\end{equation}
+\textbf{Description of the above figure:} 
+\begin{itemize}
+\item \textbf{Till $\mathcal{D}_1$:} We prepare an input $A$ of the first use of the process i.e. $\mathcal{C}$ and the other variables are directly def to $\mathcal{D}_1$ then we process again the output of the $\mathcal{C}_1$ with some variables in the lab (untouched ones) at $\mathcal{D}_1$.
+\item \textbf{From $\mathcal{D}_1$ to $\mathcal{D}_2$:} The processed variables at $\mathcal{D}_1$ are then partially fed to the $\mathcal{C}$ and the remaining variables are kept in the lab (untouched).
+\item We keep continuing this till some time and at the end we do \textcolor{red}{observation} which is basically \textbf{a guess on the correct hypothesis} i.e. $\mathcal{P}_x$. $x$ defines the \textbf{correct hypothesis}. The guess \textcolor{red}{$x$ can be either $1$ or $2$ so on and is decided by the number of available prior hypothesis}.
+\end{itemize}
+This is a very general kind of intervention which has \textbf{special cases} in \textit{process tomography}, \textit{parallel strategies} etc.
+\\
+
+\noindent\textbf{NOTE:} The only thing that would not fit in the above framework is when we take into account the ordering of actions i.e. $\mathcal{D}$s the experimentalist considers is \textit{indefinite}
+
+\subsection{Discrimination Rate}
+\textcolor{red}{TIMESTAMP: $28:34$}
 \end{document}
