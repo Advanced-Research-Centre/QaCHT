@@ -2,7 +2,15 @@ from qiskit import *
 from qiskit import Aer
 import numpy as np
 from itertools import combinations
+import matplotlib.pyplot as plt
 import pickle
+
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif",
+    "font.size": 10,
+    'text.latex.preamble': r'\usepackage{amsfonts}'
+})
 
 def setpartition(iterable, n=2):
     iterable = list(iterable)
@@ -187,20 +195,39 @@ def aritra_dar_dosha( aritra_der_bortoni ):
 
 if __name__ == "__main__":
     
+    fig, ax = plt.subplots( figsize=(5,4) )
+    list_opts = [ 'cry', 'identity' ]
+
 
     aritra_dar_dimension = 4
-    list_opts = [ 'cry', 'identity' ]
-    total_qubit_required = 2*aritra_dar_dimension + int( np.ceil( np.log2( aritra_dar_dimension ) ) )
-    partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
-    qubit_partitions = setpartition_to_list(partition)
+    
+    subsystem_sim_list = []
+    partition_list = []
+    for aritra_dar_dimension in range(2, 12):
+        total_qubit_required = 2*aritra_dar_dimension + int( np.ceil( np.log2( aritra_dar_dimension ) ) )
+        partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
+        qubit_partitions = setpartition_to_list(partition)
+        subsystem_sim_list.append(aritra_dar_dimension)
+        partition_list.append(len(partition))
+        # print(f'For dimension {aritra_dar_dimension}, we need permutation {len(qubit_partitions)}')
+    ax.semilogy( subsystem_sim_list, partition_list, '-x' )
+    ax.semilogy( [4], [3], 'ro', alpha=.4, ms=9, lw=3, label = 'Simulation presented in article')
+    ax.set_ylabel('Number of permutations')
+    ax.set_xlabel('$N_A \ \\textrm{or} \ N_B$')
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig('plot/numb_of_perm.pdf')
+    plt.savefig('plot/numb_of_perm.png')
+    plt.show()
+    exit()
+    
     gate = 'had'
-
     if gate == 'had':
         theta_init_list = [0]
     else:
         theta_init_list = np.arange(0, 4*np.pi, 0.5)
     
-    theta_oracle_list = np.arange(0, 4*np.pi, 0.5)
+    theta_oracle_list = np.arange(0, 4*np.pi, 0.01)
 
     for theta_init in theta_init_list:
         for theta_oracle in theta_oracle_list:
