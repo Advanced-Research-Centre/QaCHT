@@ -8,6 +8,9 @@ from qiskit.quantum_info.operators import Chi, Choi
 from matplotlib import rcParams
 import matplotlib.font_manager as font_manager
 
+
+
+
 plt.rcParams.update({
     "text.usetex": True,
     "font.family": "serif",
@@ -82,13 +85,26 @@ def distinguishing_probability(list_opts, gate, theta_init, theta_oracle):
                 # x += dict_identity[k]
     return x
 
+def number_of_perms():
+    aritra_dar_dimension = 4
+    subsystem_sim_list = []
+    partition_list = []
+    for aritra_dar_dimension in range(2, 12):
+        partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
+        subsystem_sim_list.append(aritra_dar_dimension)
+        partition_list.append(len(partition))
+    ax.semilogy( subsystem_sim_list, partition_list, '-x' )
+    ax.semilogy( [4], [3], 'ro', alpha=.4, ms=9, lw=3, label = 'Simulation presented in article')
+    ax.set_ylabel('Number of permutations')
+    ax.set_xlabel('$N_A \ \\textrm{or} \ N_B$')
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig('plot/numb_of_perm.pdf')
+
 if __name__ == "__main__":
 
     fig, ax = plt.subplots( figsize=(5,4) )
-    # theta_range = np.linspace(0, 4*np.pi, 500)
     theta_range =  np.arange(0, 4*np.pi, 0.05)
-    # print(len( theta_range ))
-    # exit()
     total_list_opts = [ [ 'cry', 'identity' ] ] #, [ 'swap', 'identity' ] ]
     calculate = 'prob'
     gate_list = 'had'
@@ -123,7 +139,7 @@ if __name__ == "__main__":
 
                 if no == 0:
                     ax = plt.gca()
-                    ax.plot( list_angle, list_data, line_style[no], label = 'Simulated error')#, label = f'{gate}', oracle = [cry,id]' )
+                    ax.plot( list_angle, list_data, line_style[no])#, label = f'{gate}', oracle = [cry,id]' )
                     ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
                     ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
                     ax.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
@@ -134,36 +150,26 @@ if __name__ == "__main__":
                 ax.set_xlabel( '$\\theta$' )
             
             dict_error_prob[f'{no}'] = list_data
-    
-    # ax2 = ax.twinx()
-    # process_dist = []
-    # qc_id = oracle_type(0, 'identity')
-    # id_chi_op = Operator(Chi(qc_id).data)
-    # for theta_init in theta_range:
-    #     qc_cry = oracle_type(theta_init, 'cry')
-    #     cry_chi_op = Operator(Chi(qc_cry).data)
-    #     process_distance = 1 - process_fidelity( id_chi_op, cry_chi_op )
-    #     process_dist.append( process_distance )
-    
-    # ax2.plot( theta_range, process_dist, 'b-x', label = '[cry, id] process distance' )
-    # ax2.set_ylabel( 'Process distance', color = 'blue', fontsize = 12 )
 
     difference_list = []
     for el in dict_error_prob['0']:
         difference = el - dict_error_prob['0'][0]
         difference_list.append(difference)
 
-    # plt.plot(theta_range, difference_list, 'g--v' ,label = 'difference [cry,id], [swap,id]')
-
     if calculate == 'rate':
         plt.plot( theta_range, [0.60205999132]*len(theta_range), 'k-', label = 'chiribella disrimination rate' )
         plt.ylabel('Discrimination rate', fontsize=14)
     elif calculate == 'prob':
         chiribella_error_prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))
-        plt.plot( theta_range, [chiribella_error_prob]*len(theta_range), 'k--', label = 'Theoretical error' )
-        ax.set_ylabel( '$p_{\\small \\textrm{err}}$',  fontsize = 14 )
+        plt.plot( theta_range, [chiribella_error_prob]*len(theta_range), 'k--', label = 'Limiting case error prob. ($p_{\\small \\textrm{err}}$)' )
+        ax.set_ylabel( '$p_{\\small \\textrm{err}}^{\\small \\textrm{prac}}$',  fontsize = 14 )
 
     plt.legend(loc = 'best')
+    plt.xticks(fontsize = 12)
+    plt.yticks(fontsize = 12)
+    plt.xlabel(fontsize = 13)
+    plt.ylabel(fontsize = 13)
+
     plt.tight_layout()
     plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.pdf' )
     plt.savefig( f'plot/hypothesis_distinguishing_{calculate}.png' )

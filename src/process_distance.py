@@ -29,5 +29,9 @@ if __name__ == "__main__":
         process_distance = 1 - process_fidelity( id_chi_op, cry_chi_op )
         x.append(process_distance)
     
+    plt.xticks(fontsize = 12)
+    plt.yticks(fontsize = 12)
+    plt.xlabel(fontsize = 13)
+    plt.ylabel(fontsize = 13)
     plt.plot(theta_range, x)
     plt.show()
