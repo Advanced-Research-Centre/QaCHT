@@ -208,7 +208,7 @@ if __name__ == "__main__":
     else:
         theta_init_list = np.arange(0, 4*np.pi, 0.5)
     
-    theta_oracle_list = np.arange(0, 4*np.pi, 0.05)
+    theta_oracle_list = np.arange(0, 8*np.pi, 0.05)
 
     for theta_init in theta_init_list:
         for theta_oracle in theta_oracle_list:
