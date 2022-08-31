@@ -17,7 +17,7 @@
 	\section{Introduction}
 	To test hypothesis about the causal structure in a setting where we have different \textit{prior hypothesis} of how we infer a bunch of variables are causally related to each other. \textbf{We aim to find which hypothesis is the correct one among the set of prior considerations}.
 	
-	\subsection{Test} To causal hypothesis one need to emphasize an allotted role of intervention and how it is important to plan carefully the interventions in order to maximize our chances to find out the right hypothesis.
+	\subsection{Test} To find the correct causal hypothesis one need to emphasize an allotted role of intervention and how it is important to plan carefully the interventions in order to maximize our chances to find out the right hypothesis.
 	
 	\subsection{Causality} For a set of variables in $A$ and in $B$, we can say \textbf{$A$ is a cause for $B$} if and only if \textbf{our ability to intervene $A$ has a visible effect on the statistics of $B$}.
 	
@@ -49,7 +49,7 @@
 				& \ghost{\rho} & \qw & \ghost{\mathcal{C}}
 			}\nonumber	
 		\end{equation}
-		The variables are distinguished in two parts \textit{input} and \textit{output}. Whatever comes from $\mathcal{M}_a$ (which is our choice of measurement on $a$) causes $b$ i.e. it effects the measurement outcome of $b$ presented through $\mathcal{N}_b$.
+		The variables are distinguished in two parts \textit{input} and \textit{output}. Whatever comes from $\mathcal{M}_a$ (which is our choice of measurement on $A$) causes $b$ i.e. it effects the measurement outcome of $B$ presented through $\mathcal{N}_b$.
 		\item \textcolor{red}{2nd hypothesis:} \textbf{$A$ and $B$ have a common cause}
 		\begin{equation}
 			\Qcircuit @C=1em @R=.7em {
@@ -90,7 +90,7 @@
 			\Qcircuit @C=1em @R=0.6em {
 				\lstick{} & \multigate{1}{\mathcal{C}} & \qw & B \\
 				\lstick{} & \ghost{\mathcal{C}}  &  & C
-				\inputgroup{1}{2}{.75em}{A}}
+\textsc{}				\inputgroup{1}{2}{.75em}{A}}
 			\nonumber	
 		\end{equation}
 		\item \textbf{$A$ causes $C$ but not $B$}
@@ -122,23 +122,23 @@
 		\caption{General strategy}
 		\label{circ:cascade-exp}	
 	\end{figure}
-	\textbf{Description of the above figure:} 
+	\textbf{Description of the figure below:} 
 	\begin{itemize}
-		\item \textbf{Till $\mathcal{D}_1$:} We prepare an input $A$ of the first use of the process i.e. $\mathcal{C}$ and the other variables are directly def to $\mathcal{D}_1$ then we process again the output of the $\mathcal{C}_1$ with some variables in the lab (untouched ones) at $\mathcal{D}_1$.
-		\item \textbf{From $\mathcal{D}_1$ to $\mathcal{D}_2$:} The processed variables at $\mathcal{D}_1$ are then partially fed to the $\mathcal{C}$ and the remaining variables are kept in the lab (untouched).
-		\item We keep continuing this till some time and at the end we do \textcolor{red}{observation} which is basically \textbf{a guess on the correct hypothesis} i.e. $\mathcal{P}_x$. $x$ defines the \textbf{correct hypothesis}. The guess \textcolor{red}{$x$ can be either $1$ or $2$ so on and is decided by the number of available prior hypothesis}.
+		\item \textbf{Till $\mathcal{C}_1$:} We prepare an input $A$ of the first use of the process i.e. $\mathcal{C}$ and the other variables are directly fed to $\mathcal{C}_1$ then we process again the output of the $\mathcal{C}_1$ with some variables in the lab (untouched ones) at $\mathcal{C}_1$.
+		\item \textbf{From $\mathcal{C}_1$ to $\mathcal{C}_2$:} The processed variables at $\mathcal{C}_1$ are then partially fed to the $\mathcal{C}_2$ and the remaining variables are kept in the lab (untouched).
+		\item We keep continuing this till some time and at the end we do \textcolor{red}{observation} which is basically \textbf{a guess on the correct hypothesis} i.e. $\mathcal{P}_x$, where $x$ defines the \textbf{correct hypothesis}. The guess \textcolor{red}{$x$ can be either $1$ or $2$ or any number and is decided by the number of available prior hypothesis}.
 	\end{itemize}
 	This is a very general kind of intervention which has \textbf{special cases} in \textit{process tomography}, \textit{parallel strategies} etc.
 	\\
 	
-	\noindent\textbf{NOTE:} The only thing that would not fit in the above framework is when we take into account the ordering of actions i.e. $\mathcal{D}$s the experimentalist considers is \textit{indefinite}
+	\noindent\textbf{NOTE:} The only thing that would not fit in the above framework is when we take into account the ordering of actions i.e. the ordering of $\mathcal{C}$s. Under experimentalist point of view it is \textit{ill definite}.
 	
 	\subsection{Discrimination Rate}
-	An important notion when we do an experiment with \textit{finite number of data} is \textbf{how your probability of error or succes depends on the number of experiments you do} which is equivalent to \textbf{how many times you query the black box or the oracle}.
+	An important notion when we do an experiment with \textit{finite number of data} is \textbf{how the probability of error or success depends on the number of experiments we do} which is equivalent to \textbf{how many times we query the black box or the oracle}.
 	\\
 	
 	\begin{itemize}
-	\item At the end of the cascaded experiment (check the circuit [\ref{circ:cascade-exp}]) we are going to get a guess on the correct hypothesis and we would like to minimze the \textit{probability of error} i.e. probability of choosing the wrong hypothesis as much as possible.
+	\item At the end of the cascaded experiment (check the circuit [\ref{circ:cascade-exp}]) we are going to get a guess on the correct hypothesis and we would like to minimize the \textit{probability of error} i.e. probability of choosing the wrong hypothesis as much as possible.
 	\\
 	
 	\item \textbf{As we do not know what is the causal structure i.e the relation between different variables under consideration so we are going to take a wrost case approach}. Under this consdieration we choose \textbf{\textcolor{red}{worst-case error probability}}
