@@ -14,7 +14,7 @@ import matplotlib.font_manager as font_manager
 plt.rcParams.update({
     "text.usetex": True,
     "font.family": "serif",
-    "font.size": 11,
+    "font.size": 14,
     'text.latex.preamble': r'\usepackage{amsfonts}'
 })
 
@@ -85,22 +85,35 @@ def distinguishing_probability(list_opts, gate, theta_init, theta_oracle):
                 # x += dict_identity[k]
     return x
 
-def number_of_perms():
-    _, ax = plt.subplots(figsize = (4,3.6))
+def operations_vs_linearly_independent_state(ax1):
+    subsystem_sim_list = []
+    partition_list = []
+    for aritra_dar_dimension in range(2, 12):
+        partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
+        # subsystem_sim_list.append(np.ceil(np.log(len(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))))
+        subsystem_sim_list.append(len(partition))
+        partition_list.append(len(partition)*len(partition[0]))
+    ax1.plot( subsystem_sim_list, partition_list, '-x' )
+    ax1.set_yscale('log')
+    ax1.set_xscale('log')
+    ax1.semilogy( [3], [6], 'ro', alpha=.3, ms=9, lw=3)
+    ax1.set_ylabel('Number of operations', fontsize = 14)
+    ax1.set_xlabel('$r$', fontsize = 14)
+
+def operations_vs_subsystem_dim(ax2):
     aritra_dar_dimension = 4
     subsystem_sim_list = []
     partition_list = []
     for aritra_dar_dimension in range(2, 12):
         partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
         subsystem_sim_list.append(aritra_dar_dimension)
-        partition_list.append(len(partition))
-    ax.semilogy( subsystem_sim_list, partition_list, '-x' )
-    ax.semilogy( [4], [3], 'ro', alpha=.4, ms=9, lw=3, label = 'Simulation presented in article')
-    ax.set_ylabel('Number of permutations')
-    ax.set_xlabel('Dimension of subsystem')
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig('plot/numb_of_perm.pdf')
+        partition_list.append(len(partition)*len(partition[0]))
+    ax2.plot( subsystem_sim_list, partition_list, '-x' )
+    ax2.set_yscale('log')
+    ax2.semilogy( [4], [6], 'ro', alpha=.3, ms=9, lw=3, label = 'Simulation presented in article')
+    # ax2.set_ylabel('Number of operations', fontsize = 14)
+    ax2.set_xlabel('$N_{A}$',fontsize = 14)
+    ax2.legend()
 
 
 def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
@@ -253,8 +266,15 @@ def practical_case_error_prob(ax2):
     ax2.legend(loc = 'center', bbox_to_anchor=(0.5, 1.06))
 
 if __name__ == "__main__":
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5), sharey=True )
+    operations_vs_linearly_independent_state(ax1)
+    operations_vs_subsystem_dim(ax2)
+    plt.tight_layout()
+    plt.savefig( f'plot/number_of_operations.pdf' )
+    plt.savefig( f'plot/number_of_operations.png' )
 
-    number_of_perms()
+
+    exit()
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5) )
     practical_case_error_prob(ax1)
     oracle_distance(ax2)
