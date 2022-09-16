@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: unsrt.bst
+Database file #1: ref.bib
+Warning--empty journal in sarkar2022applications
+You've used 20 entries,
+            1791 wiz_defined-function locations,
+            563 strings with 7150 characters,
+and the built_in function-call counts, 4689 in all, are:
+= -- 404
+> -- 247
+< -- 3
++ -- 90
+- -- 70
+* -- 320
+:= -- 766
+add.period$ -- 63
+call.type$ -- 20
+change.case$ -- 18
+chr.to.int$ -- 0
+cite$ -- 21
+duplicate$ -- 213
+empty$ -- 436
+format.name$ -- 70
+if$ -- 1037
+int.to.chr$ -- 0
+int.to.str$ -- 20
+missing$ -- 22
+newline$ -- 103
+num.names$ -- 20
+pop$ -- 59
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 96
+stack$ -- 0
+substring$ -- 255
+swap$ -- 48
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 44
+width$ -- 22
+write$ -- 217
+(There was 1 warning)

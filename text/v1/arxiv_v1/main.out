@@ -1,0 +1,13 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Overview of causal inference}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Challenges of performing causal inference}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Classical techniques in causal inference}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Algorithmic machine learning}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Quantum computation and algorithmic information}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{Causal hypothesis testing}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{Quantum advantage in classical causal hypothesis testing}{section.3}% 8
+\BOOKMARK [1][-]{section.4}{Problem formulation}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{Model implementation}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{ Practical error probability}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.3}{Numerical results}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 13
