@@ -108,23 +108,21 @@ def bell():
     return gate
 
 
-def causal_oracle(opt, theta):
+def causal_oracle(theta_y):
     """
     Output:
     -------
     Bell's Unitary.
     """
     qc_ent = QuantumCircuit(2)
-    if opt == 'cry':
-        qc_ent.cry( theta , [0],[1])
-    elif opt == 'identity':
-        qc_ent.id([0])
-        qc_ent.id([1])
+    
+    qc_ent.ry(theta_y, [1])
+    qc_ent.swap([1], [0])
     gate = qc_ent.to_gate(label = 'C')
     return gate
 
 
-def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, gate, theta_init, theta_oracle ):
+def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle ):
     """
     Input:
     ------
@@ -140,7 +138,7 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, gate, th
     Aritra dar causality hypothesis circuit
     """
     control_no = int( np.ceil( np.log2( aritra_dar_dimension ) ) )
-    qc = QuantumCircuit( 2*aritra_dar_dimension + control_no )
+    qc = QuantumCircuit( 2*aritra_dar_dimension + control_no+1 )
 
     target_qubits_total = qubit_partitions
     control_qubits = []
@@ -171,7 +169,8 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, gate, th
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
     
     # for _ in range(oracle_repeation):
-    c_oracle = causal_oracle(opt, theta_oracle)
+    c_oracle = causal_oracle(theta_oracle)
+    # qc.rx(theta_x, [2*aritra_dar_dimension + control_no])
     for causal_q in range(aritra_dar_dimension):
         qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension ] )
     
@@ -205,31 +204,27 @@ if __name__ == "__main__":
     gate = 'had'
     if gate == 'had':
         theta_init_list = [0]
+        theta_init = theta_init_list[0]
     else:
         theta_init_list = np.arange(0, 4*np.pi, 0.5)
-    
-    theta_oracle_list = np.arange(0, 8*np.pi, 0.05)
-
-    for theta_init in theta_init_list:
+    theta_oracle_list = np.arange(0, 8*np.pi, 2.0)
+    theta_x_list = np.arange(0, 8*np.pi, 2.0)
+    for theta_x in theta_x_list:
+        dict_prob = {}
         for theta_oracle in theta_oracle_list:
-            theta_init = round(theta_init, 2)
-            theta_oracle = round(theta_oracle, 2)
-
-            for opt in list_opts:
-                dict_prob = {}
-                print(f'{opt} before output for initial angle {theta_init}, oracle angle {theta_oracle}')
-                print('--------------')
-                aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, opt, gate, theta_init, theta_oracle )
-                aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni ) 
-                # print(aritra_dar_bortoni.decompose())
-                # exit()
-                for i in range(len(aritra_chiribella_dosha)):
-                    p = abs(aritra_chiribella_dosha[i])
-                    if p > 1e-5:
-                        dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p**2
-                file = f'data/{opt}_dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_initial_initialization_{gate}.p'
-                with open(file, 'wb') as handle:
-                    pickle.dump(dict_prob, handle)
+            theta_init, theta_oracle, theta_x = round(theta_init, 2), round(theta_oracle, 2), round(theta_x, 2)
+            
+            print(f'oracle angle {theta_oracle}, RX angle {theta_x}')
+            print('--------------')
+            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle )
+            aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni )
+            for i in range(len(aritra_chiribella_dosha)):
+                p = abs(aritra_chiribella_dosha[i])
+                if p > 1e-5:
+                    dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p**2
+            file = f'data/dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+            with open(file, 'wb') as handle:
+                pickle.dump(dict_prob, handle)
 
 # SWAP (Probability amplitude)
     # 00 0000 0000 0.5000000000000004
