@@ -1,5 +1,6 @@
 from qiskit import *
 from qiskit import Aer
+from qiskit.quantum_info import partial_trace
 import numpy as np
 from itertools import combinations
 import matplotlib.pyplot as plt
@@ -114,15 +115,16 @@ def causal_oracle(theta_y):
     -------
     Bell's Unitary.
     """
-    qc_ent = QuantumCircuit(2)
-    
+    qc_ent = QuantumCircuit(3)
+
     qc_ent.ry(theta_y, [1])
-    qc_ent.swap([1], [0])
+    qc_ent.cswap([2], [1], [0])
+    
     gate = qc_ent.to_gate(label = 'C')
     return gate
 
 
-def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle ):
+def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x ):
     """
     Input:
     ------
@@ -170,13 +172,14 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_i
     
     # for _ in range(oracle_repeation):
     c_oracle = causal_oracle(theta_oracle)
-    # qc.rx(theta_x, [2*aritra_dar_dimension + control_no])
+    # print(c_oracle)
+    qc.rx(theta_x, [2*aritra_dar_dimension + control_no])
     for causal_q in range(aritra_dar_dimension):
-        qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension ] )
+        qc.append( c_oracle, [ causal_q, causal_q + aritra_dar_dimension, 2*aritra_dar_dimension + control_no])
     
     return qc
 
-def aritra_dar_dosha( aritra_der_bortoni ):
+def aritra_dar_dosha( aritra_der_bortoni, ancilla ):
     """
     Input:
     ------
@@ -190,12 +193,12 @@ def aritra_dar_dosha( aritra_der_bortoni ):
     """
     simulator = Aer.get_backend('statevector_simulator')
     result = execute(aritra_der_bortoni, simulator).result()
-    return result.get_statevector( aritra_der_bortoni )
+    statevector = result.get_statevector( aritra_der_bortoni )
+    return partial_trace(statevector, [ancilla])
 
 if __name__ == "__main__":
     
-
-    list_opts = [ 'cry', 'identity' ]
+    hypothesis_list = ["identity", "swap-ry"]
     aritra_dar_dimension = 4
     total_qubit_required = 2*aritra_dar_dimension + int( np.ceil( np.log2( aritra_dar_dimension ) ) )
     partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
@@ -203,28 +206,43 @@ if __name__ == "__main__":
     
     gate = 'had'
     if gate == 'had':
-        theta_init_list = [0]
+        theta_init_list = [0.0]
         theta_init = theta_init_list[0]
     else:
-        theta_init_list = np.arange(0, 4*np.pi, 0.5)
-    theta_oracle_list = np.arange(0, 8*np.pi, 2.0)
-    theta_x_list = np.arange(0, 8*np.pi, 2.0)
+        theta_init_list = np.arange(0, 2*np.pi, 0.5)
+    
+    hypothesis = hypothesis_list[1]
+    
+    if hypothesis == "identity":
+        theta_oracle_list = [0.0]
+        theta_x_list = [0.0]
+    elif hypothesis == "swap-ry":
+        theta_oracle_list = np.arange(0, 4*np.pi, np.pi/10)
+        theta_x_list = np.arange(0, 4*np.pi, np.pi/10)
+
     for theta_x in theta_x_list:
         dict_prob = {}
         for theta_oracle in theta_oracle_list:
-            theta_init, theta_oracle, theta_x = round(theta_init, 2), round(theta_oracle, 2), round(theta_x, 2)
+            theta_init, theta_oracle, theta_x = round(theta_init, 3), round(theta_oracle, 3), round(theta_x, 3)
             
             print(f'oracle angle {theta_oracle}, RX angle {theta_x}')
             print('--------------')
-            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle )
-            aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni )
-            for i in range(len(aritra_chiribella_dosha)):
-                p = abs(aritra_chiribella_dosha[i])
+            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
+            aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
+            # print(aritra_dar_bortoni.decompose())
+            # exit()
+            # print(aritra_chiribella_dosha.data)
+            aritra_chiribella_diaganalized = np.diag(aritra_chiribella_dosha.data)
+            x = []
+            for i in range(len(aritra_chiribella_diaganalized)):
+                p = abs(aritra_chiribella_diaganalized[i])
                 if p > 1e-5:
                     dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p**2
-            file = f'data/dict_prob_initial_ang_{theta_init}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+            file = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+            print(file)
             with open(file, 'wb') as handle:
                 pickle.dump(dict_prob, handle)
+    print(len(x))
 
 # SWAP (Probability amplitude)
     # 00 0000 0000 0.5000000000000004
