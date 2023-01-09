@@ -12,22 +12,12 @@ from mpl_toolkits.mplot3d import axes3d
 import matplotlib.pyplot as plt
 import numpy
 
-# fig = plt.figure()
-# ax = fig.add_subplot(projection='3d')
-
-# # Grab some test data.
-# X, Y, Z = axes3d.get_test_data(0.05)
-# print(X.shape)
-# print(X.shape)
-# print(X.shape)
-# # Plot a basic wireframe.
-# ax.plot_wireframe(X, Y, Z, rstride=10, cstride=10)
-# plt.show()
-
+# print((3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2))))
+# exit()
 plt.rcParams.update({
     "text.usetex": True,
     "font.family": "serif",
-    "font.size": 14,
+    "font.size": 12,
     'text.latex.preamble': r'\usepackage{amsfonts}'
 })
 
@@ -180,27 +170,24 @@ def oracle_type(theta, type):
     else:
         qc.id([0])
         qc.id([1])
-    
     return qc
-
 def DeltaT(dm_i, dm_j):
     dist = np.real(0.5* np.trace( np.sqrt((dm_i - dm_j)**2 )))
     return dist
-
 def DeltaB(dm_i, dm_j):
     fid = process_fidelity(Operator(dm_j), Operator(dm_i))
     dist = 2*(1-np.sqrt(fid))
     return dist
-
 def DeltaHS(dm_i, dm_j):
     dist = np.abs(np.trace((dm_i - dm_j)**2))
     return dist
 
-def oracle_distance(ax1):
+def oracle_distance():
+    fig, ax1 = plt.subplots(1, 1, figsize=(4.7,4) )
     qc_id = oracle_type(0, 'id')
     qc_id_unitary = Operator(qc_id).data
     mxd_choi_mat = np.eye(len(qc_id_unitary))/len(qc_id_unitary)
-    theta_range = np.arange(0, 4*np.pi, np.pi/5)
+    theta_range = np.arange(0, 4*np.pi, np.pi/10)
     d1,d2,d3 = [],[],[]
     # prob = [] #HACK
     for t in theta_range:
@@ -221,27 +208,67 @@ def oracle_distance(ax1):
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
     # ax2.plot(prob) #HACK
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
-    ax1.set_ylabel("$ \\Delta\\left[CRY(\\theta), \mathbb{I}\\otimes\mathbb{I}\\right] $")
-    ax1.set_xlabel("$\\theta$")
-    ax1.legend(loc = 'center', ncol = 2, bbox_to_anchor=(0.5, 1.1))
+    ax1.set_ylabel("$ \\Delta [U_{\\small\\textrm{orc}}^{H_0}(0,0), U_{\\small\\textrm{orc}}^{H_1}(\\pi,\\theta_y)] $")
+    ax1.set_xlabel("$\\theta_y$")
+    ax1.legend(loc = 'center', ncol = 2, bbox_to_anchor=(0.5, 1.12), fontsize = 10)
+    fig.tight_layout()
+    plt.savefig('plot/diff_process_dist.pdf')
+    plt.savefig('plot/diff_process_dist.png')
 
+class MyAxes3D(axes3d.Axes3D):
+
+    def __init__(self, baseObject, sides_to_draw):
+        self.__class__ = type(baseObject.__class__.__name__,
+                              (self.__class__, baseObject.__class__),
+                              {})
+        self.__dict__ = baseObject.__dict__
+        self.sides_to_draw = list(sides_to_draw)
+        self.mouse_init()
+
+    def set_some_features_visibility(self, visible):
+        for t in self.w_zaxis.get_ticklines() + self.w_zaxis.get_ticklabels():
+            t.set_visible(visible)
+        self.w_zaxis.line.set_visible(visible)
+        self.w_zaxis.pane.set_visible(visible)
+        self.w_zaxis.label.set_visible(visible)
+
+    def draw(self, renderer):
+        self.set_some_features_visibility(False)
+        super(MyAxes3D, self).draw(renderer)
+        self.set_some_features_visibility(True)
+        zaxis = self.zaxis
+        draw_grid_old = zaxis.axes._draw_grid
+        zaxis.axes._draw_grid = False
+        tmp_planes = zaxis._PLANES
+
+        if 'l' in self.sides_to_draw :
+            zaxis._PLANES = (tmp_planes[2], tmp_planes[3],
+                             tmp_planes[0], tmp_planes[1],
+                             tmp_planes[4], tmp_planes[5])
+            zaxis.draw(renderer)
+        if 'r' in self.sides_to_draw :
+            zaxis._PLANES = (tmp_planes[3], tmp_planes[2], 
+                             tmp_planes[1], tmp_planes[0], 
+                             tmp_planes[4], tmp_planes[5])
+            zaxis.draw(renderer)
+
+        zaxis._PLANES = tmp_planes
+        zaxis.axes._draw_grid = draw_grid_old
 
 def practical_case_error_prob(ax1, ax2):
-
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5) )
     theta_range = np.arange(0, 4*np.pi, np.pi/3)
     theta_x_list = theta_range
     theta_oracle_list = theta_range
     hypothesis_list = ["identity", "swap-ry"]
     hypothesis = hypothesis_list[1]
 
-
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "swap-ry":
-        theta_oracle_list = np.arange(0, 4*np.pi, np.pi/10)
-        theta_x_list = np.arange(0, 4*np.pi, np.pi/10)
-    
+        theta_oracle_list = np.arange(0, 4*np.pi, np.pi/20)
+        theta_x_list = np.arange(0, 4*np.pi, np.pi/20)
     
     for theta_oracle in theta_oracle_list:
         list_data = []
@@ -255,10 +282,8 @@ def practical_case_error_prob(ax1, ax2):
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
-
     ax1.set_xlabel('$\\theta_x$')
     ax1.set_ylabel('$P_{err}$')
-
 
     for theta_x in theta_x_list:
         list_data = []
@@ -275,83 +300,63 @@ def practical_case_error_prob(ax1, ax2):
     ax2.set_xlabel('$\\theta_{y}$')
 
 def drawPropagation():
-    """ beta2 in ps / km
-        C is chirp
-        z is an array of z positions """
     
     hypothesis_list = ["identity", "swap-ry"]
     hypothesis = hypothesis_list[1]
+    theta_oracle_list, theta_x_list = np.arange(0, 4*np.pi, np.pi/10), np.arange(0, 4*np.pi, np.pi/10)
+    sx, sy = theta_oracle_list.size, theta_x_list.size
+    theta_oracle_list_plot, theta_x_list_plot = numpy.tile(theta_oracle_list, (sy, 1)), numpy.tile(theta_x_list, (sx, 1)).T
+    prac_prob_plot = np.zeros((len(theta_oracle_list), len(theta_x_list)))
 
-    T, z = np.arange(0, 4*np.pi, np.pi/10), np.arange(0, 4*np.pi, np.pi/10)
-    sx, sy = T.size, z.size
-    T_plot, z_plot = numpy.tile(T, (sy, 1)), numpy.tile(z, (sx, 1)).T
-    U_plot = np.zeros((len(T), len(T)))
-
-    for no, theta_oracle in enumerate(T):
+    for no, theta_oracle in enumerate(theta_oracle_list):
         U = []
-        for theta_x in z:
+        for theta_x in theta_x_list:
             theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
             prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
             U.append(prob)
-        U_plot[no] = U
+        prac_prob_plot[no] = U
     
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1, projection='3d')
-    norm = plt.Normalize( T_plot.min(), T_plot.max() )
-    colors = cm.viridis( norm(T_plot) )
+    _, (ax1, ax2) = plt.subplots(1,2,figsize=(10,4.6),subplot_kw=dict(projection='3d'))
+    norm = plt.Normalize( theta_oracle_list.min(), theta_oracle_list.max() )
+    colors = cm.viridis( norm(theta_oracle_list_plot) )
     rcount, ccount, _ = colors.shape
-    surf = ax.plot_surface(T_plot, z_plot, U_plot, rcount=rcount, ccount=ccount,
+    
+    # theta_x
+    surf = ax1.plot_surface(theta_oracle_list_plot, theta_x_list_plot, prac_prob_plot, rcount=rcount, ccount=ccount,
                        facecolors=colors, shade=False)
     surf.set_facecolor((0,0,0,0))
-    ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-    ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-    ax.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
-    ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-    ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
-    ax.set_xlabel('$\\theta_y$')
-    ax.set_ylabel('$\\theta_x$')
-    ax.set_zlabel('$P_{err}$')
+    ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi)) # theta_y np.pi/2
+    ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    ax1.yaxis.set_major_locator(plt.MultipleLocator(np.pi/2)) # theta_x np.pi/2
+    ax1.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax1.yaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    ax1.set_xlabel('$\\theta_y$', labelpad=10)
+    ax1.set_ylabel('$\\theta_x$', labelpad=10)
+    ax1.set_zlabel('$p_{\\small\\textrm{err}}^{\\small\\textrm{prac}}$', labelpad=10)
+    ax1.view_init(elev=None, azim=15) # theta_x
+    
+    # theta_y
+    surf = ax2.plot_surface(theta_oracle_list_plot, theta_x_list_plot, prac_prob_plot, rcount=rcount, ccount=ccount,
+                       facecolors=colors, shade=False)
+    surf.set_facecolor((0,0,0,0))
+    ax2.xaxis.set_major_locator(plt.MultipleLocator(np.pi/2)) # theta_y np.pi/2
+    ax2.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax2.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    ax2.yaxis.set_major_locator(plt.MultipleLocator(np.pi)) # theta_x np.pi/2
+    ax2.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax2.yaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    ax2.set_xlabel('$\\theta_y$', labelpad=10)
+    ax2.set_ylabel('$\\theta_x$', labelpad=10)
+    ax2.set_zlabel('$p_{\\small\\textrm{err}}^{\\small\\textrm{prac}}$', labelpad=10)
+    ax2.view_init(40, azim=75)
+    # ax2.zaxis.set_label_position('top')
+    # plt.show()
+
 
 #data/dict_prob_initial_ora_identity_ang_0.0_oracle_ang_0.0_theta_x_0.0_initial_initialization_had.p
 if __name__ == "__main__":
 
+    oracle_distance()
+
     drawPropagation()
-    plt.savefig( f'plot/practical_case_error_prob.pdf' )
-    plt.savefig( f'plot/practical_case_error_prob.png' )
-    exit()
-
-    # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5), sharey=True )
-    # operations_vs_linearly_independent_state(ax1)
-    # operations_vs_subsystem_dim(ax2)
-    # plt.tight_layout()
-    # plt.savefig( f'plot/number_of_operations.pdf' )
-    # plt.savefig( f'plot/number_of_operations.png' )
-
-
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5), sharey=True )
-    # ax1.legend()
-    ax = fig.add_subplot(projection='3d')
-    practical_case_error_prob(ax)
-    plt.savefig( f'plot/practical_case_error_prob.pdf' )
-    plt.savefig( f'plot/practical_case_error_prob.png' )
-    exit()
-    # oracle_distance(ax1)
-    # plt.savefig( f'plot/plot.pdf' )
-    # plt.savefig( f'plot/plot.png' )
-    # plt.show()
-    # exit()
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5) )
-    ax1.set_ylim(-0.05,0.05)
-    practical_case_error_prob(ax1)
-    plt.show()
-    # exit()
-    oracle_distance(ax2)
-    plt.tight_layout()
-    plt.savefig( f'plot/prac_error_prob.pdf' )
-    plt.savefig( f'plot/prac_error_prob.png' )
-    exit()
-    plt.savefig( f'plot/limiting_error_prob.pdf' )
-    plt.savefig( f'plot/limiting_error_prob.png' )
-    plt.show()

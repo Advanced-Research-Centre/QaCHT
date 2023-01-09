@@ -217,8 +217,8 @@ if __name__ == "__main__":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "swap-ry":
-        theta_oracle_list = np.arange(0, 4*np.pi, np.pi/10)
-        theta_x_list = np.arange(0, 4*np.pi, np.pi/10)
+        theta_oracle_list = np.arange(0, 4*np.pi, np.pi/20)
+        theta_x_list = np.arange(0, 4*np.pi, np.pi/20)
 
     for theta_x in theta_x_list:
         dict_prob = {}
