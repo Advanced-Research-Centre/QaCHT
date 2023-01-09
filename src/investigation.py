@@ -215,51 +215,8 @@ def oracle_distance():
     plt.savefig('plot/diff_process_dist.pdf')
     plt.savefig('plot/diff_process_dist.png')
 
-class MyAxes3D(axes3d.Axes3D):
-
-    def __init__(self, baseObject, sides_to_draw):
-        self.__class__ = type(baseObject.__class__.__name__,
-                              (self.__class__, baseObject.__class__),
-                              {})
-        self.__dict__ = baseObject.__dict__
-        self.sides_to_draw = list(sides_to_draw)
-        self.mouse_init()
-
-    def set_some_features_visibility(self, visible):
-        for t in self.w_zaxis.get_ticklines() + self.w_zaxis.get_ticklabels():
-            t.set_visible(visible)
-        self.w_zaxis.line.set_visible(visible)
-        self.w_zaxis.pane.set_visible(visible)
-        self.w_zaxis.label.set_visible(visible)
-
-    def draw(self, renderer):
-        self.set_some_features_visibility(False)
-        super(MyAxes3D, self).draw(renderer)
-        self.set_some_features_visibility(True)
-        zaxis = self.zaxis
-        draw_grid_old = zaxis.axes._draw_grid
-        zaxis.axes._draw_grid = False
-        tmp_planes = zaxis._PLANES
-
-        if 'l' in self.sides_to_draw :
-            zaxis._PLANES = (tmp_planes[2], tmp_planes[3],
-                             tmp_planes[0], tmp_planes[1],
-                             tmp_planes[4], tmp_planes[5])
-            zaxis.draw(renderer)
-        if 'r' in self.sides_to_draw :
-            zaxis._PLANES = (tmp_planes[3], tmp_planes[2], 
-                             tmp_planes[1], tmp_planes[0], 
-                             tmp_planes[4], tmp_planes[5])
-            zaxis.draw(renderer)
-
-        zaxis._PLANES = tmp_planes
-        zaxis.axes._draw_grid = draw_grid_old
-
-def practical_case_error_prob(ax1, ax2):
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,5) )
-    theta_range = np.arange(0, 4*np.pi, np.pi/3)
-    theta_x_list = theta_range
-    theta_oracle_list = theta_range
+def practical_case_error_prob():
+    fig, ax1 = plt.subplots(1, 1, figsize=(4.8,4) )
     hypothesis_list = ["identity", "swap-ry"]
     hypothesis = hypothesis_list[1]
 
@@ -270,36 +227,40 @@ def practical_case_error_prob(ax1, ax2):
         theta_oracle_list = np.arange(0, 4*np.pi, np.pi/20)
         theta_x_list = np.arange(0, 4*np.pi, np.pi/20)
     
+    list_data = []
+    list_angle = []
     for theta_oracle in theta_oracle_list:
-        list_data = []
-        list_angle = []
-        for theta_x in theta_x_list:
-            theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
-            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
-            list_angle.append(theta_x)
-            list_data.append(prob)
-        ax1.plot(list_angle, list_data)
-    ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-    ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-    ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
-    ax1.set_xlabel('$\\theta_x$')
-    ax1.set_ylabel('$P_{err}$')
-
-    for theta_x in theta_x_list:
-        list_data = []
-        list_angle = []
-        for theta_oracle in theta_oracle_list:
+        for theta_x in [np.pi]:#theta_x_list:
             theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
             prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
             list_angle.append(theta_oracle)
             list_data.append(prob)
-        ax2.plot(list_angle, list_data)
-    ax2.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-    ax2.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-    ax2.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
-    ax2.set_xlabel('$\\theta_{y}$')
+    ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_x = \\pi$, variation with $\\theta_y$", markerfacecolor='none')
+    ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
+    ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    # ax1.set_xlabel('$\\theta$')
+    ax1.set_ylabel('$p_{\\small\\textrm{err}}^{\\small\\textrm{prac}}$')
 
-def drawPropagation():
+    list_data = []
+    list_angle = []
+    for theta_x in theta_x_list:
+        for theta_oracle in [0.0]:#theta_oracle_list:
+            theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
+            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
+            list_angle.append(theta_x)
+            list_data.append(prob)
+    ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_y = 0.0$, variation with $\\theta_x$")
+    ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
+    ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    ax1.set_xlabel('$\\theta$')
+    plt.legend(loc = 'best')
+    plt.tight_layout()
+    plt.savefig('plot/prac_prob_vs_thetas.pdf')
+    plt.savefig('plot/prac_prob_vs_thetas.png')
+
+def prac_prob_err_3d():
     
     hypothesis_list = ["identity", "swap-ry"]
     hypothesis = hypothesis_list[1]
@@ -356,7 +317,9 @@ def drawPropagation():
 
 #data/dict_prob_initial_ora_identity_ang_0.0_oracle_ang_0.0_theta_x_0.0_initial_initialization_had.p
 if __name__ == "__main__":
+    practical_case_error_prob()
 
+    exit()
     oracle_distance()
 
-    drawPropagation()
+    prac_prob_err_3d()
