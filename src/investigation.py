@@ -223,7 +223,7 @@ def theoretical_case_error_prob():
             dist.append(delta)
             list_data.append(1- delta*(1-prob))
             list_angle.append(theta_x)
-    print(dist)
+    # print(dist)
     # exit()
     ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_x = \\pi$, variation with $\\theta_y$", markerfacecolor='none')
     ax1.hlines((3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2))), xmin=[0.0], xmax=[4*np.pi])
@@ -342,10 +342,11 @@ def prac_prob_err_3d():
 
 
 if __name__ == "__main__":
-    # practical_case_error_prob()
+    practical_case_error_prob()
+    exit()
     # prac_prob_err_3d()
 
 
     # exit()
-    oracle_distance()
+    # oracle_distance()
     theoretical_case_error_prob()

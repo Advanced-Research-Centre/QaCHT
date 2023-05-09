@@ -113,17 +113,17 @@ def causal_oracle(theta_y):
     gate = qc_ent.to_gate(label = 'C')
     return gate
 
-def causal_oracle_iswap():
+def causal_oracle_iswap(theta_oracle):
     """
     Output:
     -------
     Causal Oracle iSWAP(theta).
     """
-    theta = Parameter('θ')
+    # theta = Parameter('θ')
     circuit = QuantumCircuit(2)
-    circuit.rxx(theta, 0, 1)
-    circuit.ryy(theta, 0, 1)
-    gate = circuit.to_gate(label = f'iSWAP').control(1)
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+    gate = circuit.to_gate(label = f'iSWAP-{theta_oracle}').control(1)
     return gate
 
 def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x ):
@@ -173,12 +173,15 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_i
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
     
     # for _ in range(oracle_repeation):
-    c_oracle = causal_oracle(theta_oracle)
+    c_oracle = causal_oracle_iswap(theta_oracle)
+
+    # print(causal_q, causal_q + aritra_dar_dimension, )
     # print(c_oracle)
     qc.rx(theta_x, [2*aritra_dar_dimension + control_no])
     for causal_q in range(aritra_dar_dimension):
-        qc.append( c_oracle, [causal_q, causal_q + aritra_dar_dimension, 2*aritra_dar_dimension + control_no])
-    
+        qc.append( c_oracle, [2*aritra_dar_dimension + control_no, causal_q, causal_q + aritra_dar_dimension])
+    qc.rx(-theta_x, [2*aritra_dar_dimension + control_no])
+    # qc.assign_parameters({'θ' : theta_oracle})
     return qc
 
 def aritra_dar_dosha( aritra_der_bortoni, ancilla ):
@@ -194,6 +197,7 @@ def aritra_dar_dosha( aritra_der_bortoni, ancilla ):
     aritra_der_dosha = Is basically the statevector from the causally connected circuit.
     """
     simulator = Aer.get_backend('statevector_simulator')
+    # print(aritra_dar_bortoni)
     result = execute(aritra_der_bortoni, simulator).result()
     statevector = result.get_statevector( aritra_der_bortoni )
     return partial_trace(statevector, [ancilla])
@@ -222,6 +226,7 @@ if __name__ == "__main__":
         theta_oracle_list = np.arange(0, 2*np.pi, np.pi/20)
         theta_x_list = np.arange(0, 2*np.pi, np.pi/20)
 
+    
     for theta_x in theta_x_list:
         dict_prob = {}
         for theta_oracle in theta_oracle_list:
@@ -231,9 +236,9 @@ if __name__ == "__main__":
             print('--------------')
             aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
+            
             # print(aritra_dar_bortoni.decompose())
-            # print(aritra_dar_bortoni)
-            # exit()
+            
             # print(aritra_chiribella_dosha.data)
             aritra_chiribella_diaganalized = np.diag(aritra_chiribella_dosha.data)
             x = []
