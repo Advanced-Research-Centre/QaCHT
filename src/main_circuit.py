@@ -159,6 +159,8 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_i
             qc.rz( theta_init, q_rot )
         elif gate == 'had':
             qc.h(q_rot)
+        elif gate == 'none':
+            qc = qc
 
     num = 0
     t = target_qubits_total[0][0]
@@ -172,14 +174,19 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_i
             bit = format(num, f'0{control_no}b')
             circuit_subroutine(qc, control_qubits, target_qubits_total[i], bit)
     
+    for el in range(control_no):
+        control_qubits.append( 2*aritra_dar_dimension + el )
+        qc.h([2*aritra_dar_dimension+el])
     # for _ in range(oracle_repeation):
     c_oracle = causal_oracle_iswap(theta_oracle)
 
     # print(causal_q, causal_q + aritra_dar_dimension, )
     # print(c_oracle)
     qc.rx(theta_x, [2*aritra_dar_dimension + control_no])
+    
     for causal_q in range(aritra_dar_dimension):
         qc.append( c_oracle, [2*aritra_dar_dimension + control_no, causal_q, causal_q + aritra_dar_dimension])
+    
     # qc.rx(-theta_x, [2*aritra_dar_dimension + control_no])
     # qc.assign_parameters({'θ' : theta_oracle})
     return qc
@@ -210,21 +217,22 @@ if __name__ == "__main__":
     partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
     qubit_partitions = setpartition_to_list(partition)
     
-    gate = 'had'
+    gate = 'none'
     if gate == 'had':
         theta_init_list = [0.0]
         theta_init = theta_init_list[0]
     else:
-        theta_init_list = np.arange(0, 2*np.pi, 0.5)
+        theta_init_list = [0.0]
+        theta_init = theta_init_list[0]
     
-    hypothesis = hypothesis_list[1]
+    hypothesis = hypothesis_list[0]
     
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "iswap":
-        theta_oracle_list = np.arange(0, 2*np.pi, np.pi/20)
-        theta_x_list = np.arange(0, 2*np.pi, np.pi/20)
+        theta_oracle_list = np.arange(0, 2*np.pi, np.pi/5)
+        theta_x_list = np.arange(0, 2*np.pi, np.pi/5)
 
     
     for theta_x in theta_x_list:
@@ -237,7 +245,8 @@ if __name__ == "__main__":
             aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
             
-            # print(aritra_dar_bortoni.decompose())
+            # print(aritra_dar_bortoni)
+            # exit()
             
             # print(aritra_chiribella_dosha.data)
             aritra_chiribella_diaganalized = np.diag(aritra_chiribella_dosha.data)

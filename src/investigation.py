@@ -63,7 +63,8 @@ def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
     
     dict_hypo_1 = pickle.load(open(file_hypo_1, "rb"))
     dict_hypo_2 = pickle.load(open(file_hypo_2, "rb"))
-    
+    # print(dict_hypo_1)
+    # exit()
     list_key_hypo_1 = []
     list_key_hypo_2 = []
     for k in dict_hypo_1.keys():
@@ -218,7 +219,7 @@ def theoretical_case_error_prob():
     for theta_x in theta_x_list:
         for theta_oracle in [0.0]:
             theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
-            prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))
+            prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2))) # CHIRIBELLA
             qc_cry = oracle_type(theta_x, 'rx-c-swap')
             result = execute(qc_cry, Aer.get_backend('statevector_simulator')).result()
             cry_state = np.asmatrix(result.get_statevector( qc_cry ))
@@ -255,12 +256,14 @@ def practical_case_error_prob():
         theta_oracle_list = np.arange(0, 2*np.pi, np.pi/5)
         theta_x_list = np.arange(0, 2*np.pi, np.pi/5)
     
+    chiri_prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))
     list_data = []
     list_angle = []
     for theta_oracle in theta_oracle_list:
         for theta_ctrl in [np.pi]:#theta_x_list:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            prob =  1 - distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
+            dist =  distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
+            prob = 1 - dist*( 1 - chiri_prob )
             list_angle.append(theta_oracle)
             list_data.append(prob)
     ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
@@ -275,10 +278,11 @@ def practical_case_error_prob():
     for theta_ctrl in theta_x_list:
         for theta_oracle in [np.pi]:#theta_oracle_list:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
+            dist = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
+            prob = 1 - dist*( 1 - chiri_prob)
             list_angle.append(theta_ctrl)
             list_data.append(prob)
-    ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_\\textrm{oracle} = 0.0$, variation with $\\theta_\\textrm{ctrl}$")
+    ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_\\textrm{oracle} = \\pi$, variation with $\\theta_\\textrm{ctrl}$")
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
@@ -303,7 +307,7 @@ def prac_prob_err_3d():
         U = []
         for theta_x in theta_x_list:
             theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
-            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
+            prob = 1- distinguishing_probability(hypothesis, 'none', theta_oracle, theta_x)
             U.append(prob)
         prac_prob_plot[no] = U
     

@@ -2,10 +2,11 @@ from qiskit import *
 import numpy
 
 qc1, qc2 = QuantumCircuit(4), QuantumCircuit(4)
-qc2.h(0)
-qc2.h(1)
-qc2.h(2)
-qc2.h(3)
+qc2.iswap(0,3)
+qc2.iswap(1,2)
+# qc2.h(1)
+# qc2.h(2)
+# qc2.h(3)
 
 dict_prob_qc1 = {}
 dict_prob_qc2 = {}
@@ -49,4 +50,4 @@ for k in list_key_hypo_2:
     if k not in common_bits:
         x += dict_prob_qc2[k]
 
-print(1-x)
+print(x)
