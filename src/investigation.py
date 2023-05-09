@@ -60,14 +60,18 @@ class Multiple:
 def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
     file_hypo_1 = f'data/dict_prob_initial_hypo_identity_oracle_ang_0.0_theta_x_0.0_initial_initialization_{gate}.p'
     file_hypo_2 = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+    
     dict_hypo_1 = pickle.load(open(file_hypo_1, "rb"))
     dict_hypo_2 = pickle.load(open(file_hypo_2, "rb"))
+    
     list_key_hypo_1 = []
     list_key_hypo_2 = []
     for k in dict_hypo_1.keys():
         list_key_hypo_1.append(k)
     for k in dict_hypo_2.keys():
         list_key_hypo_2.append(k)
+
+
     common_bits = []
     for i in list_key_hypo_1:
         for j in list_key_hypo_2:
@@ -241,25 +245,25 @@ def theoretical_case_error_prob():
 
 def practical_case_error_prob():
     fig, ax1 = plt.subplots(1, 1, figsize=(4.8,4) )
-    hypothesis_list = ["identity", "swap-ry"]
+    hypothesis_list = ["identity", "iswap"]
     hypothesis = hypothesis_list[1]
 
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
-    elif hypothesis == "swap-ry":
-        theta_oracle_list = np.arange(0, np.pi, np.pi/20)
-        theta_x_list = np.arange(0, np.pi, np.pi/20)
+    elif hypothesis == "iswap":
+        theta_oracle_list = np.arange(0, 2*np.pi, np.pi/5)
+        theta_x_list = np.arange(0, 2*np.pi, np.pi/5)
     
     list_data = []
     list_angle = []
     for theta_oracle in theta_oracle_list:
-        for theta_x in [np.pi]:#theta_x_list:
-            theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
-            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
+        for theta_ctrl in [np.pi]:#theta_x_list:
+            theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
+            prob =  1 - distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
             list_angle.append(theta_oracle)
             list_data.append(prob)
-    ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_x = \\pi$, variation with $\\theta_y$", markerfacecolor='none')
+    ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
@@ -268,13 +272,13 @@ def practical_case_error_prob():
 
     list_data = []
     list_angle = []
-    for theta_x in theta_x_list:
-        for theta_oracle in [0.0]:#theta_oracle_list:
-            theta_oracle, theta_x = round(theta_oracle, 3), round(theta_x, 3)
-            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_x)
-            list_angle.append(theta_x)
+    for theta_ctrl in theta_x_list:
+        for theta_oracle in [np.pi]:#theta_oracle_list:
+            theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
+            prob = 1- distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
+            list_angle.append(theta_ctrl)
             list_data.append(prob)
-    ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_y = 0.0$, variation with $\\theta_x$")
+    ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_\\textrm{oracle} = 0.0$, variation with $\\theta_\\textrm{ctrl}$")
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))

@@ -180,7 +180,7 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_i
     qc.rx(theta_x, [2*aritra_dar_dimension + control_no])
     for causal_q in range(aritra_dar_dimension):
         qc.append( c_oracle, [2*aritra_dar_dimension + control_no, causal_q, causal_q + aritra_dar_dimension])
-    qc.rx(-theta_x, [2*aritra_dar_dimension + control_no])
+    # qc.rx(-theta_x, [2*aritra_dar_dimension + control_no])
     # qc.assign_parameters({'θ' : theta_oracle})
     return qc
 
@@ -204,7 +204,7 @@ def aritra_dar_dosha( aritra_der_bortoni, ancilla ):
 
 if __name__ == "__main__":
     
-    hypothesis_list = ["identity", "swap-ry"]
+    hypothesis_list = ["identity", "iswap"]
     aritra_dar_dimension = 4
     total_qubit_required = 2*aritra_dar_dimension + int( np.ceil( np.log2( aritra_dar_dimension ) ) )
     partition = list(setpartition(list(range(aritra_dar_dimension, 2*aritra_dar_dimension))))
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
-    elif hypothesis == "swap-ry":
+    elif hypothesis == "iswap":
         theta_oracle_list = np.arange(0, 2*np.pi, np.pi/20)
         theta_x_list = np.arange(0, 2*np.pi, np.pi/20)
 

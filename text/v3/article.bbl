@@ -1,0 +1,320 @@
+%apsrev4-2.bst 2019-01-14 (MD) hand-edited version of apsrev4-1.bst
+%Control: key (0)
+%Control: author (8) initials jnrlst
+%Control: editor formatted (1) identically to author
+%Control: production of article title (0) allowed
+%Control: page (0) single
+%Control: year (1) truncated
+%Control: production of eprint (0) enabled
+\begin{thebibliography}{24}%
+\makeatletter
+\providecommand \@ifxundefined [1]{%
+ \@ifx{#1\undefined}
+}%
+\providecommand \@ifnum [1]{%
+ \ifnum #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}%
+\providecommand \@ifx [1]{%
+ \ifx #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}%
+\providecommand \natexlab [1]{#1}%
+\providecommand \enquote  [1]{``#1''}%
+\providecommand \bibnamefont  [1]{#1}%
+\providecommand \bibfnamefont [1]{#1}%
+\providecommand \citenamefont [1]{#1}%
+\providecommand \href@noop [0]{\@secondoftwo}%
+\providecommand \href [0]{\begingroup \@sanitize@url \@href}%
+\providecommand \@href[1]{\@@startlink{#1}\@@href}%
+\providecommand \@@href[1]{\endgroup#1\@@endlink}%
+\providecommand \@sanitize@url [0]{\catcode `\\12\catcode `\$12\catcode
+  `\&12\catcode `\#12\catcode `\^12\catcode `\_12\catcode `\%12\relax}%
+\providecommand \@@startlink[1]{}%
+\providecommand \@@endlink[0]{}%
+\providecommand \url  [0]{\begingroup\@sanitize@url \@url }%
+\providecommand \@url [1]{\endgroup\@href {#1}{\urlprefix }}%
+\providecommand \urlprefix  [0]{URL }%
+\providecommand \Eprint [0]{\href }%
+\providecommand \doibase [0]{https://doi.org/}%
+\providecommand \selectlanguage [0]{\@gobble}%
+\providecommand \bibinfo  [0]{\@secondoftwo}%
+\providecommand \bibfield  [0]{\@secondoftwo}%
+\providecommand \translation [1]{[#1]}%
+\providecommand \BibitemOpen [0]{}%
+\providecommand \bibitemStop [0]{}%
+\providecommand \bibitemNoStop [0]{.\EOS\space}%
+\providecommand \EOS [0]{\spacefactor3000\relax}%
+\providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}%
+\let\auto@bib@innerbib\@empty
+%</preamble>
+\bibitem [{\citenamefont {Sarkar}\ \emph
+  {et~al.}(2021{\natexlab{a}})\citenamefont {Sarkar}, \citenamefont {Al-Ars},\
+  and\ \citenamefont {Bertels}}]{sarkar2021estimating}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Sarkar}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Al-Ars}},\
+  and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Bertels}},\
+  }\bibfield  {title} {\bibinfo {title} {Estimating algorithmic information
+  using quantum computing for genomics applications},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {Applied Sciences}\ }\textbf
+  {\bibinfo {volume} {11}},\ \bibinfo {pages} {2696} (\bibinfo {year}
+  {2021}{\natexlab{a}})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ried}\ \emph {et~al.}(2015)\citenamefont {Ried},
+  \citenamefont {Agnew}, \citenamefont {Vermeyden}, \citenamefont {Janzing},
+  \citenamefont {Spekkens},\ and\ \citenamefont {Resch}}]{ried2015quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {Ried}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Agnew}},
+  \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Vermeyden}}, \bibinfo
+  {author} {\bibfnamefont {D.}~\bibnamefont {Janzing}}, \bibinfo {author}
+  {\bibfnamefont {R.~W.}\ \bibnamefont {Spekkens}},\ and\ \bibinfo {author}
+  {\bibfnamefont {K.~J.}\ \bibnamefont {Resch}},\ }\bibfield  {title} {\bibinfo
+  {title} {A quantum advantage for inferring causal structure},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {Nature Physics}\ }\textbf
+  {\bibinfo {volume} {11}},\ \bibinfo {pages} {414} (\bibinfo {year}
+  {2015})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Fitzsimons}\ \emph {et~al.}(2015)\citenamefont
+  {Fitzsimons}, \citenamefont {Jones},\ and\ \citenamefont
+  {Vedral}}]{fitzsimons2015quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~F.}\ \bibnamefont
+  {Fitzsimons}}, \bibinfo {author} {\bibfnamefont {J.~A.}\ \bibnamefont
+  {Jones}},\ and\ \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont
+  {Vedral}},\ }\bibfield  {title} {\bibinfo {title} {Quantum correlations which
+  imply causation},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Scientific reports}\ }\textbf {\bibinfo {volume} {5}},\ \bibinfo {pages} {1}
+  (\bibinfo {year} {2015})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chiribella}\ and\ \citenamefont
+  {Ebler}(2019)}]{chiribella2019quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Chiribella}}\ and\ \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont
+  {Ebler}},\ }\bibfield  {title} {\bibinfo {title} {Quantum speedup in the
+  identification of cause--effect relations},\ }\href@noop {} {\bibfield
+  {journal} {\bibinfo  {journal} {Nature communications}\ }\textbf {\bibinfo
+  {volume} {10}},\ \bibinfo {pages} {1} (\bibinfo {year} {2019})}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Lavin}\ \emph {et~al.}(2021)\citenamefont {Lavin},
+  \citenamefont {Zenil}, \citenamefont {Paige}, \citenamefont {Krakauer},
+  \citenamefont {Gottschlich}, \citenamefont {Mattson}, \citenamefont
+  {Anandkumar}, \citenamefont {Choudry}, \citenamefont {Rocki}, \citenamefont
+  {Baydin} \emph {et~al.}}]{lavin2021simulation}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Lavin}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Zenil}},
+  \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Paige}}, \bibinfo
+  {author} {\bibfnamefont {D.}~\bibnamefont {Krakauer}}, \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Gottschlich}}, \bibinfo {author}
+  {\bibfnamefont {T.}~\bibnamefont {Mattson}}, \bibinfo {author} {\bibfnamefont
+  {A.}~\bibnamefont {Anandkumar}}, \bibinfo {author} {\bibfnamefont
+  {S.}~\bibnamefont {Choudry}}, \bibinfo {author} {\bibfnamefont
+  {K.}~\bibnamefont {Rocki}}, \bibinfo {author} {\bibfnamefont {A.~G.}\
+  \bibnamefont {Baydin}}, \emph {et~al.},\ }\bibfield  {title} {\bibinfo
+  {title} {Simulation intelligence: Towards a new generation of scientific
+  methods},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv
+  preprint arXiv:2112.03235}\ } (\bibinfo {year} {2021})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Maruyama}(2021)}]{maruyama2021categorical}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Maruyama}},\ }\bibfield  {title} {\bibinfo {title} {Categorical artificial
+  intelligence: the integration of symbolic and statistical ai for verifiable,
+  ethical, and trustworthy ai},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {International Conference on Artificial General Intelligence}}}\
+  (\bibinfo {organization} {Springer},\ \bibinfo {year} {2021})\ pp.\ \bibinfo
+  {pages} {127--138}\BibitemShut {NoStop}%
+\bibitem [{Note1()}]{Note1}%
+  \BibitemOpen
+  \bibinfo {note} {A treatment is an action that can be applied or withheld
+  from that unit.}\BibitemShut {Stop}%
+\bibitem [{\citenamefont {Guo}\ \emph {et~al.}(2020)\citenamefont {Guo},
+  \citenamefont {Cheng}, \citenamefont {Li}, \citenamefont {Hahn},\ and\
+  \citenamefont {Liu}}]{guo2020survey}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Guo}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Cheng}}, \bibinfo
+  {author} {\bibfnamefont {J.}~\bibnamefont {Li}}, \bibinfo {author}
+  {\bibfnamefont {P.~R.}\ \bibnamefont {Hahn}},\ and\ \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {Liu}},\ }\bibfield  {title} {\bibinfo
+  {title} {A survey of learning causality with data: Problems and methods},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {ACM Computing
+  Surveys (CSUR)}\ }\textbf {\bibinfo {volume} {53}},\ \bibinfo {pages} {1}
+  (\bibinfo {year} {2020})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Rothman}\ and\ \citenamefont
+  {Greenland}(2005)}]{rothman2005causation}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {K.~J.}\ \bibnamefont
+  {Rothman}}\ and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Greenland}},\ }\bibfield  {title} {\bibinfo {title} {Causation and causal
+  inference in epidemiology},\ }\href@noop {} {\bibfield  {journal} {\bibinfo
+  {journal} {American journal of public health}\ }\textbf {\bibinfo {volume}
+  {95}},\ \bibinfo {pages} {S144} (\bibinfo {year} {2005})}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Pearl}\ \emph {et~al.}(2000)\citenamefont {Pearl}
+  \emph {et~al.}}]{pearl2000models}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Pearl}} \emph {et~al.},\ }\bibfield  {title} {\bibinfo {title} {Models,
+  reasoning and inference},\ }\href@noop {} {\bibfield  {journal} {\bibinfo
+  {journal} {Cambridge, UK: CambridgeUniversityPress}\ }\textbf {\bibinfo
+  {volume} {19}} (\bibinfo {year} {2000})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Imbens}\ and\ \citenamefont
+  {Rubin}(2015)}]{imbens2015causal}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.~W.}\ \bibnamefont
+  {Imbens}}\ and\ \bibinfo {author} {\bibfnamefont {D.~B.}\ \bibnamefont
+  {Rubin}},\ }\href@noop {} {\emph {\bibinfo {title} {Causal inference in
+  statistics, social, and biomedical sciences}}}\ (\bibinfo  {publisher}
+  {Cambridge University Press},\ \bibinfo {year} {2015})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Spirtes}\ \emph {et~al.}(2000)\citenamefont
+  {Spirtes}, \citenamefont {Glymour}, \citenamefont {Scheines},\ and\
+  \citenamefont {Heckerman}}]{spirtes2000causation}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Spirtes}}, \bibinfo {author} {\bibfnamefont {C.~N.}\ \bibnamefont
+  {Glymour}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Scheines}},\
+  and\ \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Heckerman}},\
+  }\href@noop {} {\emph {\bibinfo {title} {Causation, prediction, and
+  search}}}\ (\bibinfo  {publisher} {MIT press},\ \bibinfo {year}
+  {2000})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zenil}\ \emph {et~al.}(2019)\citenamefont {Zenil},
+  \citenamefont {Kiani}, \citenamefont {Zea},\ and\ \citenamefont
+  {Tegn{\'e}r}}]{zenil2019causal}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Zenil}}, \bibinfo {author} {\bibfnamefont {N.~A.}\ \bibnamefont {Kiani}},
+  \bibinfo {author} {\bibfnamefont {A.~A.}\ \bibnamefont {Zea}},\ and\ \bibinfo
+  {author} {\bibfnamefont {J.}~\bibnamefont {Tegn{\'e}r}},\ }\bibfield  {title}
+  {\bibinfo {title} {Causal deconvolution by algorithmic generative models},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Nature Machine
+  Intelligence}\ }\textbf {\bibinfo {volume} {1}},\ \bibinfo {pages} {58}
+  (\bibinfo {year} {2019})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Sarkar}(2022)}]{sarkar2022applications}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Sarkar}},\ }\bibfield  {title} {\bibinfo {title} {Applications of quantum
+  computation and algorithmic information: for causal modeling in genomics and
+  reinforcement learning},\ }\href@noop {} {\  (\bibinfo {year}
+  {2022})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Sarkar}\ \emph
+  {et~al.}(2021{\natexlab{b}})\citenamefont {Sarkar}, \citenamefont {Al-Ars},
+  \citenamefont {Gandhi},\ and\ \citenamefont {Bertels}}]{sarkar2021qksa}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Sarkar}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Al-Ars}},
+  \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Gandhi}},\ and\ \bibinfo
+  {author} {\bibfnamefont {K.}~\bibnamefont {Bertels}},\ }\bibfield  {title}
+  {\bibinfo {title} {Qksa: Quantum knowledge seeking agent--resource-optimized
+  reinforcement learning using quantum process tomography},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2112.03643}\
+  } (\bibinfo {year} {2021}{\natexlab{b}})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Costa}\ and\ \citenamefont
+  {Shrapnel}(2016)}]{costa2016quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
+  {Costa}}\ and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Shrapnel}},\ }\bibfield  {title} {\bibinfo {title} {Quantum causal
+  modelling},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {New
+  Journal of Physics}\ }\textbf {\bibinfo {volume} {18}},\ \bibinfo {pages}
+  {063032} (\bibinfo {year} {2016})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Giarmatzi}(2019)}]{giarmatzi2019quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
+  {Giarmatzi}},\ }\bibfield  {title} {\bibinfo {title} {A quantum causal
+  discovery algorithm},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle}
+  {Rethinking Causality in Quantum Mechanics}}}\ (\bibinfo  {publisher}
+  {Springer},\ \bibinfo {year} {2019})\ pp.\ \bibinfo {pages}
+  {125--150}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Javidian}\ \emph {et~al.}(2021)\citenamefont
+  {Javidian}, \citenamefont {Aggarwal}, \citenamefont {Bao},\ and\
+  \citenamefont {Jacob}}]{javidian2021quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~A.}\ \bibnamefont
+  {Javidian}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Aggarwal}},
+  \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Bao}},\ and\ \bibinfo
+  {author} {\bibfnamefont {Z.}~\bibnamefont {Jacob}},\ }\bibfield  {title}
+  {\bibinfo {title} {Quantum entropic causal inference},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Quantum Information and Measurement}}}\
+  (\bibinfo {organization} {Optical Society of America},\ \bibinfo {year}
+  {2021})\ pp.\ \bibinfo {pages} {F2C--3}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bai}\ \emph {et~al.}(2021)\citenamefont {Bai},
+  \citenamefont {Wu}, \citenamefont {Zhu}, \citenamefont {Hayashi},\ and\
+  \citenamefont {Chiribella}}]{bai2021quantum}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Bai}}, \bibinfo {author} {\bibfnamefont {Y.-D.}\ \bibnamefont {Wu}},
+  \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Zhu}}, \bibinfo {author}
+  {\bibfnamefont {M.}~\bibnamefont {Hayashi}},\ and\ \bibinfo {author}
+  {\bibfnamefont {G.}~\bibnamefont {Chiribella}},\ }\bibfield  {title}
+  {\bibinfo {title} {Quantum causal unravelling},\ }\href@noop {} {\bibfield
+  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2109.13166}\ } (\bibinfo
+  {year} {2021})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bai}\ \emph {et~al.}(2020)\citenamefont {Bai},
+  \citenamefont {Wu}, \citenamefont {Zhu}, \citenamefont {Hayashi},\ and\
+  \citenamefont {Chiribella}}]{bai2020efficient}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Bai}}, \bibinfo {author} {\bibfnamefont {Y.-D.}\ \bibnamefont {Wu}},
+  \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Zhu}}, \bibinfo {author}
+  {\bibfnamefont {M.}~\bibnamefont {Hayashi}},\ and\ \bibinfo {author}
+  {\bibfnamefont {G.}~\bibnamefont {Chiribella}},\ }\bibfield  {title}
+  {\bibinfo {title} {Efficient algorithms for causal order discovery in quantum
+  networks},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv
+  preprint arXiv:2012.01731}\ } (\bibinfo {year} {2020})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bavaresco}\ \emph {et~al.}(2021)\citenamefont
+  {Bavaresco}, \citenamefont {Murao},\ and\ \citenamefont
+  {Quintino}}]{bavaresco2021strict}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Bavaresco}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Murao}},\
+  and\ \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Quintino}},\
+  }\bibfield  {title} {\bibinfo {title} {Strict hierarchy between parallel,
+  sequential, and indefinite-causal-order strategies for channel
+  discrimination},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physical review letters}\ }\textbf {\bibinfo {volume} {127}},\ \bibinfo
+  {pages} {200504} (\bibinfo {year} {2021})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Shen}\ \emph {et~al.}(2020)\citenamefont {Shen},
+  \citenamefont {Ma}, \citenamefont {Vemuri},\ and\ \citenamefont
+  {Simon}}]{shen2020challenges}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
+  {Shen}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Ma}}, \bibinfo
+  {author} {\bibfnamefont {P.}~\bibnamefont {Vemuri}},\ and\ \bibinfo {author}
+  {\bibfnamefont {G.}~\bibnamefont {Simon}},\ }\bibfield  {title} {\bibinfo
+  {title} {Challenges and opportunities with causal discovery algorithms:
+  application to alzheimer’s pathophysiology},\ }\href@noop {} {\bibfield
+  {journal} {\bibinfo  {journal} {Scientific reports}\ }\textbf {\bibinfo
+  {volume} {10}},\ \bibinfo {pages} {1} (\bibinfo {year} {2020})}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Qiu}\ \emph {et~al.}(2020)\citenamefont {Qiu},
+  \citenamefont {Rahimzamani}, \citenamefont {Wang}, \citenamefont {Ren},
+  \citenamefont {Mao}, \citenamefont {Durham}, \citenamefont
+  {McFaline-Figueroa}, \citenamefont {Saunders}, \citenamefont {Trapnell},\
+  and\ \citenamefont {Kannan}}]{qiu2020inferring}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
+  {Qiu}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Rahimzamani}},
+  \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Wang}}, \bibinfo {author}
+  {\bibfnamefont {B.}~\bibnamefont {Ren}}, \bibinfo {author} {\bibfnamefont
+  {Q.}~\bibnamefont {Mao}}, \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Durham}}, \bibinfo {author} {\bibfnamefont {J.~L.}\ \bibnamefont
+  {McFaline-Figueroa}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Saunders}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Trapnell}},\
+  and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Kannan}},\
+  }\bibfield  {title} {\bibinfo {title} {Inferring causal gene regulatory
+  networks from coupled single-cell expression dynamics using scribe},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Cell systems}\
+  }\textbf {\bibinfo {volume} {10}},\ \bibinfo {pages} {265} (\bibinfo {year}
+  {2020})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Catt}\ and\ \citenamefont
+  {Hutter}(2020)}]{catt2020gentle}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Catt}}\ and\ \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Hutter}},\
+  }\bibfield  {title} {\bibinfo {title} {A gentle introduction to quantum
+  computing algorithms with applications to universal prediction},\ }\href@noop
+  {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint
+  arXiv:2005.03137}\ } (\bibinfo {year} {2020})}\BibitemShut {NoStop}%
+\end{thebibliography}%
