@@ -58,31 +58,66 @@ class Multiple:
         return plt.FuncFormatter(multiple_formatter(self.denominator, self.number, self.latex))
 
 def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
-    file_hypo_1 = f'data/dict_prob_initial_hypo_identity_oracle_ang_0.0_theta_x_0.0_initial_initialization_{gate}.p'
-    file_hypo_2 = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+    file_hypo_id = f'data/dict_prob_initial_hypo_identity_oracle_ang_0.0_theta_x_0.0_initial_initialization_{gate}.p'
+    file_hypo_alt = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
     
-    dict_hypo_1 = pickle.load(open(file_hypo_1, "rb"))
-    dict_hypo_2 = pickle.load(open(file_hypo_2, "rb"))
-    # print(dict_hypo_1)
+    dict_hypo_id = pickle.load(open(file_hypo_id, "rb"))
+    dict_hypo_alt = pickle.load(open(file_hypo_alt, "rb"))
+
+
+
+    kalt_keys_A, kalt_keys_B, id_keys_A = [], [], []
+    for kalt in dict_hypo_alt.keys():
+        kalt_keys_A.append(kalt[:4])
+        kalt_keys_B.append(kalt[4:8])
+
+    for kid in dict_hypo_id.keys():
+        id_keys_A.append(kid[:4])
+
+    
+    # print(dict_hypo_alt.keys())
     # exit()
-    list_key_hypo_1 = []
-    list_key_hypo_2 = []
-    for k in dict_hypo_1.keys():
-        list_key_hypo_1.append(k)
-    for k in dict_hypo_2.keys():
-        list_key_hypo_2.append(k)
+    # err_prob = 0
+    # for kalt in dict_hypo_alt.keys():
+    #     # if k[:4] == k[4:8]:
+    #     if k[2:6] == k[6:]:
+    #         err_prob += dict_hypo_alt[k]
+    # err_prob1, err_prob2  = 0, 0
+    # for idno in range(16):
+    #     idno_bin = bin(idno)[2:].zfill( 4 )
+        
 
 
-    common_bits = []
-    for i in list_key_hypo_1:
-        for j in list_key_hypo_2:
-            if i == j:
-                common_bits.append(i)
-    x = 0
-    for k in list_key_hypo_2:
-        if k not in common_bits:
-            x += dict_hypo_2[k]
-    return x
+    #     for kalt in dict_hypo_alt.keys():
+    #         for kid in dict_hypo_id.keys():
+    #             # if k[:4] == k[4:8]:
+    #             if kid[6:] == kalt[2:6] == idno_bin:
+    #                 err_prob1 += dict_hypo_alt[kalt]
+    #             # if k[:4] == k[4:8]:
+    #             if kid[6:] == kalt[6:] == idno_bin:
+    #                 err_prob2 += dict_hypo_alt[kalt]
+            
+
+    # PURANO SEI DINER KOTHA
+    # list_key_hypo_1 = []
+    # list_key_hypo_2 = []
+    # for k in dict_hypo_1.keys():
+    #     list_key_hypo_1.append(k)
+    # for k in dict_hypo_2.keys():
+    #     list_key_hypo_2.append(k)
+
+
+    # common_bits = []
+    # for i in list_key_hypo_1:
+    #     for j in list_key_hypo_2:
+    #         if i == j:
+    #             common_bits.append(i)
+    # x = 0
+    # for k in list_key_hypo_2:
+    #     if k not in common_bits:
+    #         x += dict_hypo_2[k]
+
+    return err_prob1, err_prob2
 
 def operations_vs_linearly_independent_state(ax1):
     subsystem_sim_list = []
@@ -251,41 +286,50 @@ def practical_case_error_prob():
 
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
-        theta_x_list = [0.0]
     elif hypothesis == "iswap":
         theta_oracle_list = np.arange(0, 2*np.pi, np.pi/5)
-        theta_x_list = np.arange(0, 2*np.pi, np.pi/5)
     
     chiri_prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))
     list_data = []
+    list_err_data1, list_err_data2 = [], []
     list_angle = []
     for theta_oracle in theta_oracle_list:
         for theta_ctrl in [np.pi]:#theta_x_list:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            dist =  distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
-            prob = 1 - dist*( 1 - chiri_prob )
+            prob1, prob2 = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
+            # print(dist)
+            # dist = 1-prob
+            # print(prob)
+            # print(dist*10, theta_oracle)
+            # prac_prob = 1 - dist*( 1 - chiri_prob )
             list_angle.append(theta_oracle)
-            list_data.append(prob)
-    ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
+            list_err_data1.append(prob1)
+            list_err_data2.append(prob2)
+            # list_dist_data.append(dist)
+    # print(loi)
+    ax1.plot(list_angle, list_err_data1, 'r-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
+    ax1.plot(list_angle, list_err_data2, 'b-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
+    # ax1.plot(list_angle, list_dist_data, 'b-o', label = "$\\Delta$", markerfacecolor='none')
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    ax1.plot(list_angle, [chiri_prob]*len(list_angle), 'k' )
     # ax1.set_xlabel('$\\theta$')
     ax1.set_ylabel('$p_{\\small\\textrm{err}}^{\\small\\textrm{prac}}$')
 
-    list_data = []
-    list_angle = []
-    for theta_ctrl in theta_x_list:
-        for theta_oracle in [np.pi]:#theta_oracle_list:
-            theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            dist = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
-            prob = 1 - dist*( 1 - chiri_prob)
-            list_angle.append(theta_ctrl)
-            list_data.append(prob)
-    ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_\\textrm{oracle} = \\pi$, variation with $\\theta_\\textrm{ctrl}$")
-    ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-    ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
-    ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
+    # list_data = []
+    # list_angle = []
+    # for theta_ctrl in theta_x_list:
+    #     for theta_oracle in [np.pi]:#theta_oracle_list:
+    #         theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
+    #         dist = distinguishing_probability(hypothesis, 'had', theta_oracle, theta_ctrl)
+    #         prob = 1 - dist*( 1 - chiri_prob)
+    #         list_angle.append(theta_ctrl)
+    #         list_data.append(prob)
+    # ax1.plot(list_angle, list_data, 'b-x', label = "$\\theta_\\textrm{oracle} = \\pi$, variation with $\\theta_\\textrm{ctrl}$")
+    # ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
+    # ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
+    # ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
     ax1.set_xlabel('$\\theta$')
     plt.legend(loc = 'best')
     plt.tight_layout()
