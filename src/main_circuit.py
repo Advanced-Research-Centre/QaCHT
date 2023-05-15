@@ -121,12 +121,12 @@ def causal_oracle_iswap(theta_oracle):
     """
     # theta = Parameter('θ')
     circuit = QuantumCircuit(2)
-    if theta_oracle / np.round(np.pi, 3) == 1:
-        print(12453464)
-        circuit.swap(0,1)
-    else:
-        circuit.rxx(theta_oracle, 0, 1)
-        circuit.ryy(theta_oracle, 0, 1)
+    # if theta_oracle / np.round(np.pi, 3) == 1:
+    #     print(12453464)
+    #     circuit.swap(0,1)
+    # else:
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
     gate = circuit.to_gate(label = f'iSWAP-{theta_oracle}').control(1)
     return gate
 
@@ -212,6 +212,7 @@ def aritra_dar_dosha( aritra_der_bortoni, ancilla ):
     # print(aritra_dar_bortoni)
     result = execute(aritra_der_bortoni, simulator).result()
     statevector = result.get_statevector( aritra_der_bortoni )
+    print(ancilla)
     return partial_trace(statevector, [ancilla])
 
 if __name__ == "__main__":
@@ -236,8 +237,8 @@ if __name__ == "__main__":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "iswap":
-        theta_oracle_list = np.arange(0, 2*np.pi, np.pi/5)
-        theta_x_list = np.arange(0, 2*np.pi, np.pi/5)
+        theta_oracle_list = np.arange(0, 2*np.pi + np.pi/20 , np.pi/20)
+        theta_x_list = np.arange(0, 2*np.pi + np.pi/20 , np.pi/20)
 
     
     for theta_x in theta_x_list:
@@ -246,37 +247,76 @@ if __name__ == "__main__":
             print(f'oracle angle {theta_oracle}, RX angle {theta_x}')
             print('--------------')
             theta_init, theta_oracle, theta_x = round(theta_init, 3), round(theta_oracle, 3), round(theta_x, 3)
-            
             file = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
-            file_exists = exists(file)
+            
             aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
+            
+            # print(aritra_chiribella_dosha.data.shape)
+            # exit()
+            
+            # print(aritra_chiribella_dosha.data)
+            aritra_chiribella_diagonalized = np.diag(aritra_chiribella_dosha.data)
+            
+            x = []
+            t = 0
+            for i in range(len(aritra_chiribella_diagonalized)):
+                p = abs(aritra_chiribella_diagonalized[i])
+                p = aritra_chiribella_diagonalized[i].real
+                if p > 1e-20:
+                    dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p
+                    t += p
+
+            t = 0
+            for k in dict_prob.keys():
+                t += dict_prob[k]
+
+            print('SAVING!!')
+            print(file)
+            with open(file, 'wb') as handle:
+                pickle.dump(dict_prob, handle)
+            file_exists = exists(file)
+
+
+            
+            # aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
+            # aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
                 
             # print(aritra_dar_bortoni)
             # exit()
-            if file_exists:
-                print('THE FILE ALREADY EXISTS:')
-                print(file)
+            # if file_exists:
+            #     print('THE FILE ALREADY EXISTS:')
+            #     print(file)
 
-            else:
+            # else:
                 
-                aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
-                aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
+            #     aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
+            #     aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
                 
-                # print(aritra_chiribella_dosha.data.shape)
-                # exit()
+            #     # print(aritra_chiribella_dosha.data.shape)
+            #     # exit()
                 
-                # print(aritra_chiribella_dosha.data)
-                aritra_chiribella_diaganalized = np.diag(aritra_chiribella_dosha.data)
-                x = []
-                for i in range(len(aritra_chiribella_diaganalized)):
-                    p = abs(aritra_chiribella_diaganalized[i])
-                    if p > 1e-5:
-                        dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p**2
-                print('SAVING!!')
-                print(file)
-                with open(file, 'wb') as handle:
-                    pickle.dump(dict_prob, handle)
+            #     # print(aritra_chiribella_dosha.data)
+            #     aritra_chiribella_diagonalized = np.diag(aritra_chiribella_dosha.data)
+                
+            #     x = []
+            #     t = 0
+            #     for i in range(len(aritra_chiribella_diagonalized)):
+            #         p = abs(aritra_chiribella_diagonalized[i])
+            #         p = aritra_chiribella_diagonalized[i].real
+            #         if p > 1e-20:
+            #             dict_prob[f'{bin(i)[2:].zfill( total_qubit_required )}'] = p
+            #             t += p
+            #     # print(t)
+            #     t = 0
+            #     for k in dict_prob.keys():
+            #         t += dict_prob[k]
+            #     # print(t)
+            #     # exit()
+            #     print('SAVING!!')
+            #     print(file)
+            #     with open(file, 'wb') as handle:
+            #         pickle.dump(dict_prob, handle)
             
             
             

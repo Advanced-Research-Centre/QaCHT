@@ -61,30 +61,49 @@ def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
     file_hypo_id = f'data/dict_prob_initial_hypo_identity_oracle_ang_0.0_theta_x_0.0_initial_initialization_{gate}.p'
     file_hypo_alt = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
     
+    # LOADING THE DICTIONARIES
     dict_hypo_id = pickle.load(open(file_hypo_id, "rb"))
     dict_hypo_alt = pickle.load(open(file_hypo_alt, "rb"))
 
+    # LISTING THE KEYS
+    list_key_alt = []
+    list_key_id = []
+    for k in dict_hypo_alt.keys():
+        list_key_alt.append(k)
+    for k in dict_hypo_id.keys():
+        list_key_id.append(k)
 
+    # print(len(list_key_alt))
+    # GETTING THE COMMON BITS
+    common_bits = []
+    for i in list_key_alt:
+        for j in list_key_id:
+            if i == j:
+                common_bits.append(i)
 
-    kalt_keys_A, kalt_keys_B, id_keys_A = [], [], []
-    for kalt in dict_hypo_alt.keys():
-        kalt_keys_A.append(kalt[:4])
-        kalt_keys_B.append(kalt[4:8])
-
-    for kid in dict_hypo_id.keys():
-        id_keys_A.append(kid[:4])
-
-    
-    # print(dict_hypo_alt.keys())
+    print(common_bits, len(common_bits))
+    err_prob1 = 0
+    for alt_key in dict_hypo_alt.keys():
+        for id_key in dict_hypo_id.keys():
+            if id_key[:4] == alt_key[:4]:
+                if alt_key in common_bits:
+                    err_prob1 += dict_hypo_alt[alt_key]
+                # print('--------')
+    #     print('-----------')
+    # print(err_prob1)
     # exit()
-    # err_prob = 0
-    # for kalt in dict_hypo_alt.keys():
-    #     # if k[:4] == k[4:8]:
-    #     if k[2:6] == k[6:]:
-    #         err_prob += dict_hypo_alt[k]
-    # err_prob1, err_prob2  = 0, 0
-    # for idno in range(16):
-    #     idno_bin = bin(idno)[2:].zfill( 4 )
+    
+    # print(err_prob1/2)
+    # exit()
+
+    # err_prob2 = 0
+    # for alt_key in dict_hypo_alt.keys():
+    #     for id_key in dict_hypo_id.keys():
+    #         if id_key[:4] == alt_key[4:8]:
+    #         # if id_key[2:6] == alt_key[6:]:
+    #             err_prob2 += dict_hypo_alt[alt_key]
+    
+    # prs
         
 
 
@@ -117,7 +136,7 @@ def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
     #     if k not in common_bits:
     #         x += dict_hypo_2[k]
 
-    return err_prob1, err_prob2
+    return err_prob1 #err_prob2/2
 
 def operations_vs_linearly_independent_state(ax1):
     subsystem_sim_list = []
@@ -287,7 +306,7 @@ def practical_case_error_prob():
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
     elif hypothesis == "iswap":
-        theta_oracle_list = np.arange(0, 2*np.pi, np.pi/5)
+        theta_oracle_list = np.arange(0, 2*np.pi, np.pi/20)
     
     chiri_prob = (3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))
     list_data = []
@@ -296,7 +315,8 @@ def practical_case_error_prob():
     for theta_oracle in theta_oracle_list:
         for theta_ctrl in [np.pi]:#theta_x_list:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            prob1, prob2 = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
+            prob1 = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
+            prob2 = prob1/2
             # print(dist)
             # dist = 1-prob
             # print(prob)
@@ -307,7 +327,7 @@ def practical_case_error_prob():
             list_err_data2.append(prob2)
             # list_dist_data.append(dist)
     # print(loi)
-    ax1.plot(list_angle, list_err_data1, 'r-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
+    # ax1.plot(list_angle, list_err_data1, 'r-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
     ax1.plot(list_angle, list_err_data2, 'b-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
     # ax1.plot(list_angle, list_dist_data, 'b-o', label = "$\\Delta$", markerfacecolor='none')
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
