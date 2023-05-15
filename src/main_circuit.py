@@ -121,12 +121,12 @@ def causal_oracle_iswap(theta_oracle):
     """
     # theta = Parameter('θ')
     circuit = QuantumCircuit(2)
-    # if theta_oracle / np.round(np.pi, 3) == 1:
-    #     print(12453464)
-    #     circuit.swap(0,1)
-    # else:
-    circuit.rxx(theta_oracle, 0, 1)
-    circuit.ryy(theta_oracle, 0, 1)
+    if theta_oracle / np.round(np.pi, 3) == 1:
+        # print(12453464)
+        circuit.swap(0,1)
+    else:
+        circuit.rxx(theta_oracle, 0, 1)
+        circuit.ryy(theta_oracle, 0, 1)
     gate = circuit.to_gate(label = f'iSWAP-{theta_oracle}').control(1)
     return gate
 
@@ -212,7 +212,7 @@ def aritra_dar_dosha( aritra_der_bortoni, ancilla ):
     # print(aritra_dar_bortoni)
     result = execute(aritra_der_bortoni, simulator).result()
     statevector = result.get_statevector( aritra_der_bortoni )
-    print(ancilla)
+    # print(ancilla)
     return partial_trace(statevector, [ancilla])
 
 if __name__ == "__main__":
@@ -231,14 +231,14 @@ if __name__ == "__main__":
         theta_init_list = [0.0]
         theta_init = theta_init_list[0]
     
-    hypothesis = hypothesis_list[1]
-    
+    hypothesis = hypothesis_list[0]
+    smallest_div = np.pi/5
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "iswap":
-        theta_oracle_list = np.arange(0, 2*np.pi + np.pi/20 , np.pi/20)
-        theta_x_list = np.arange(0, 2*np.pi + np.pi/20 , np.pi/20)
+        theta_oracle_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
+        theta_x_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
 
     
     for theta_x in theta_x_list:
@@ -252,7 +252,7 @@ if __name__ == "__main__":
             aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
             
-            # print(aritra_chiribella_dosha.data.shape)
+            # print(aritra_dar_bortoni)
             # exit()
             
             # print(aritra_chiribella_dosha.data)
