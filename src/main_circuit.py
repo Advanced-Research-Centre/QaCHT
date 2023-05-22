@@ -113,6 +113,18 @@ def causal_oracle(theta_y):
     gate = qc_ent.to_gate(label = 'C')
     return gate
 
+def causal_oracle_swap(theta_oracle):
+    """
+    Output:
+    -------
+    Causal Oracle SWAP().
+    """
+    # theta = Parameter('θ')
+    circuit = QuantumCircuit(2)
+    circuit.swap(0,1)
+    gate = circuit.to_gate(label = f'SWAP-{theta_oracle}').control(1)
+    return gate
+
 def causal_oracle_iswap(theta_oracle):
     """
     Output:
@@ -121,16 +133,17 @@ def causal_oracle_iswap(theta_oracle):
     """
     # theta = Parameter('θ')
     circuit = QuantumCircuit(2)
-    if theta_oracle / np.round(np.pi, 3) == 1:
-        # print(12453464)
-        circuit.swap(0,1)
-    else:
-        circuit.rxx(theta_oracle, 0, 1)
-        circuit.ryy(theta_oracle, 0, 1)
+    # if theta_oracle / np.round(np.pi, 3) == 1:
+    #     # print(12453464)
+    #     circuit.swap(0,1)
+    # else:
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+        # circuit.swap(0,1)
     gate = circuit.to_gate(label = f'iSWAP-{theta_oracle}').control(1)
     return gate
 
-def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x ):
+def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x, exp_id):
     """
     Input:
     ------
@@ -183,7 +196,10 @@ def aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_i
         qc.h([2*aritra_dar_dimension+el])
 
     # for _ in range(oracle_repeation):
-    c_oracle = causal_oracle_iswap(theta_oracle)
+    if exp_id == 'ctrl-swap':
+        c_oracle = causal_oracle_swap(theta_oracle)
+    elif exp_id == 'ctrl-param-iswap':
+        c_oracle = causal_oracle_iswap(theta_oracle)
 
     # print(causal_q, causal_q + aritra_dar_dimension, )
     # print(c_oracle)
@@ -231,14 +247,23 @@ if __name__ == "__main__":
         theta_init_list = [0.0]
         theta_init = theta_init_list[0]
     
-    hypothesis = hypothesis_list[0]
-    smallest_div = np.pi/5
+    exp_id_list = ['ctrl-param-iswap', 'ctrl-swap']
+    exp_id = exp_id_list[0]
+    hypothesis = hypothesis_list[1]
+    
+    smallest_div = np.pi/20
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "iswap":
-        theta_oracle_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
-        theta_x_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
+        if exp_id == 'ctrl-param-iswap':
+            theta_oracle_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
+            theta_x_list = [np.pi]
+        elif exp_id == 'ctrl-swap':
+            theta_oracle_list = [np.pi]
+            theta_x_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
+
+    
 
     
     for theta_x in theta_x_list:
@@ -247,9 +272,9 @@ if __name__ == "__main__":
             print(f'oracle angle {theta_oracle}, RX angle {theta_x}')
             print('--------------')
             theta_init, theta_oracle, theta_x = round(theta_init, 3), round(theta_oracle, 3), round(theta_x, 3)
-            file = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+            file = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_{gate}_exp_id_{exp_id}.p'
             
-            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x )
+            aritra_dar_bortoni = aritra_dar_causality( aritra_dar_dimension , qubit_partitions, gate, theta_init, theta_oracle, theta_x, exp_id )
             aritra_chiribella_dosha = aritra_dar_dosha(  aritra_dar_bortoni, total_qubit_required )
             
             # print(aritra_dar_bortoni)

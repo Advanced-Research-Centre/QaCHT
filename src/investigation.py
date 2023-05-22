@@ -57,9 +57,9 @@ class Multiple:
     def formatter(self):
         return plt.FuncFormatter(multiple_formatter(self.denominator, self.number, self.latex))
 
-def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
-    file_hypo_id = f'data/dict_prob_initial_hypo_identity_oracle_ang_0.0_theta_x_0.0_initial_initialization_{gate}.p'
-    file_hypo_alt = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_initialization_{gate}.p'
+def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x, exp_id):
+    file_hypo_id = f'data/dict_prob_initial_hypo_identity_oracle_ang_0.0_theta_x_0.0_initial_{gate}_exp_id_{exp_id}.p'
+    file_hypo_alt = f'data/dict_prob_initial_hypo_{hypothesis}_oracle_ang_{theta_oracle}_theta_x_{theta_x}_initial_{gate}_exp_id_{exp_id}.p'
     
     # LOADING THE DICTIONARIES
     dict_hypo_id = pickle.load(open(file_hypo_id, "rb"))
@@ -88,6 +88,8 @@ def distinguishing_probability(hypothesis, gate, theta_oracle, theta_x):
                 if alt_key in common_bits:
                     err_prob1 += dict_hypo_alt[alt_key]
 
+    # print(dict_hypo_alt)
+    # print('--------')
     # err_prob1 = 0
     # alt_key_bit_done_list = []
     # for alt_key in dict_hypo_alt.keys():
@@ -191,7 +193,7 @@ def oracle_distance():
     # mxd_state = np.asmatrix(result.get_statevector( qc_id ))
     # mxd_choi_mat = mxd_state.getH() @ mxd_state
     mxd_choi_mat = Choi(qc_id)
-    theta_range = np.arange(0, 4*np.pi, np.pi/10)
+    theta_range = np.arange(0, 2*np.pi+np.pi/20, np.pi/20)
     d1,d2,d3 = [],[],[]
     # prob = [] #HACK
     for t in theta_range:
@@ -217,16 +219,16 @@ def oracle_distance():
     # ax2.plot(prob) #HACK
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
     ax1.set_ylabel("$ \\Delta [U_{\\small\\textrm{orc}}^{H_0}(0,0), U_{\\small\\textrm{orc}}^{H_1}(\\pi,\\theta_y)] $")
-    ax1.set_xlabel("$\\theta_y$")
+    ax1.set_xlabel("$\\theta_\\textrm{ctrl}$")
     ax1.legend(loc = 'center', ncol = 2, bbox_to_anchor=(0.5, 1.12), fontsize = 10)
     fig.tight_layout()
-    plt.show()
-    exit()
+    # plt.show()
+    # exit()
     plt.savefig('plot/diff_process_dist.pdf')
     plt.savefig('plot/diff_process_dist.png')
 
 def theoretical_case_error_prob():
-    fig, ax1 = plt.subplots(1, 1, figsize=(4.8,4) )
+    fig, ax1 = plt.subplots(1, 1, figsize=(4.8,3.5), constrained_layout = True )
     hypothesis_list = ["identity", "swap-ry"]
     hypothesis = hypothesis_list[1]
     qc_id = oracle_type(0, 'id')
@@ -234,9 +236,9 @@ def theoretical_case_error_prob():
     mxd_state = np.asmatrix(result.get_statevector( qc_id ))
     mxd_choi_mat = mxd_state.getH() @ mxd_state
     dist = []
+    small_div = np.pi/20
     if hypothesis == "swap-ry":
-        theta_x_list = np.arange(0, 4*np.pi, np.pi/20)
-
+        theta_x_list = np.arange(0, 2*np.pi+small_div, small_div)
     
     list_data = []
     list_angle = []
@@ -248,32 +250,36 @@ def theoretical_case_error_prob():
             result = execute(qc_cry, Aer.get_backend('statevector_simulator')).result()
             cry_state = np.asmatrix(result.get_statevector( qc_cry ))
             cry_choi_op = cry_state.getH() @ cry_state
-            delta = DeltaT(mxd_choi_mat,cry_choi_op)
+            delta = DeltaHS(mxd_choi_mat,cry_choi_op)
             dist.append(delta)
             list_data.append(1- delta*(1-prob))
             list_angle.append(theta_x)
     # print(dist)
     # exit()
-    ax1.plot(list_angle, list_data, 'r-o', label = "$\\theta_x = \\pi$, variation with $\\theta_y$", markerfacecolor='none')
-    ax1.hlines((3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2))), xmin=[0.0], xmax=[4*np.pi])
+    ax1.plot(list_angle, list_data, 'r-o', markerfacecolor='none')
+    ax1.hlines((3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2))), colors= 'k', xmin=[0.0], xmax=[2*np.pi])
     # ax1.plot([(3/(2*2**4))*(1 - np.sqrt(1 - 3**(-2)))]*len(list_data), list_data, 'k-', label = "prac err prob [Chiribella]", markerfacecolor='none')
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
     
     ax1.set_ylabel('$p_{\\small\\textrm{err}}^{\\small\\textrm{theo}}$')
-    plt.tight_layout()
-    plt.show()
-    exit()
+    ax1.set_xlabel('$\\theta_\\textrm{ctrl}$')
+    # # fig.legend(loc = 'best')
+    # # plt.tight_layout()
+    # plt.show()
+    # exit()
     plt.savefig('plot/theor_prob_vs_thetas.pdf')
     plt.savefig('plot/theor_prob_vs_thetas.png')
 
 def practical_case_error_prob():
-    fig, ax1 = plt.subplots(1, 1, figsize=(4.8,4) )
+    fig, ax1 = plt.subplots(1, 1, figsize=(5,4), constrained_layout = True )
     hypothesis_list = ["identity", "iswap"]
+    exp_id_list = ['ctrl-param-iswap', 'ctrl-swap']
     hypothesis = hypothesis_list[1]
 
-    smallest_div = np.pi/5
+
+    smallest_div = np.pi/20
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
     elif hypothesis == "iswap":
@@ -289,16 +295,16 @@ def practical_case_error_prob():
     for theta_oracle in theta_oracle_list:
         for theta_ctrl in [np.pi]:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            prob = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
+            prob = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl, exp_id=exp_id_list[0])
             list_angle.append(theta_oracle)
             list_err_data.append(prob)
 
-    ax1.plot(list_angle, list_err_data, 'b-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with $\\theta_\\textrm{oracle}$", markerfacecolor='none')
+    ax1.plot(list_angle, list_err_data, 'b-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with \\textit{Oracle} = $\\textrm{iSWAP}(\\theta_\\textrm{orc})$", markerfacecolor='none')
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
     ax1.plot(list_angle, [chiri_prob]*len(list_angle), 'k' )
-    # ax1.set_xlabel('$\\theta$')
+    ax1.set_xlabel('$\\theta$')
     ax1.set_ylabel('$p_{\\small\\textrm{err}}^{\\small\\textrm{prac}}$')
 
     list_err_data = []
@@ -306,18 +312,19 @@ def practical_case_error_prob():
     for theta_ctrl in theta_x_list:
         for theta_oracle in [np.pi]:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
-            prob = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl)
+            prob = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl, exp_id=exp_id_list[1])
+            # print(prob)
             list_angle.append(theta_ctrl)
             list_err_data.append(prob)
-    ax1.plot(list_angle, list_err_data, 'r-x', label = "$\\theta_\\textrm{oracle} = \\pi$, variation with $\\theta_\\textrm{ctrl}$")
+    ax1.plot(list_angle, list_err_data, 'r-x', label = "\\textit{Oracle} = $\\textrm{SWAP}$, variation with $\\theta_\\textrm{ctrl}$")
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
     ax1.set_xlabel('$\\theta$')
-    plt.legend(loc = 'best')
-    plt.tight_layout()
-    # plt.show()
-    # exit()
+    plt.legend(bbox_to_anchor = (0.98, 1.25))
+    # fig.tight_layout()
+    plt.show()
+    exit()
     plt.savefig('plot/prac_prob_vs_thetas.pdf')
     plt.savefig('plot/prac_prob_vs_thetas.png')
 
@@ -379,10 +386,12 @@ def prac_prob_err_3d():
 
 
 if __name__ == "__main__":
-    practical_case_error_prob()
-    exit()
-    prac_prob_err_3d()
-    exit()
+    # practical_case_error_prob()
+    # exit()
 
-    # oracle_distance()
+    # prac_prob_err_3d()
+    # exit()
+
+    oracle_distance()
+    exit()
     theoretical_case_error_prob()
