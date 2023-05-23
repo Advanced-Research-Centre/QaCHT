@@ -120,8 +120,17 @@ def causal_oracle_swap(theta_oracle):
     Causal Oracle SWAP().
     """
     # theta = Parameter('θ')
+    theta_oracle = np.pi/2
     circuit = QuantumCircuit(2)
-    circuit.swap(0,1)
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+    circuit.sx(1)
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+    circuit.sx(0)
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+    circuit.sx(1)
     gate = circuit.to_gate(label = f'SWAP-{theta_oracle}').control(1)
     return gate
 
@@ -139,7 +148,13 @@ def causal_oracle_iswap(theta_oracle):
     # else:
     circuit.rxx(theta_oracle, 0, 1)
     circuit.ryy(theta_oracle, 0, 1)
-        # circuit.swap(0,1)
+    circuit.sx(1)
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+    circuit.sx(0)
+    circuit.rxx(theta_oracle, 0, 1)
+    circuit.ryy(theta_oracle, 0, 1)
+    circuit.sx(1)
     gate = circuit.to_gate(label = f'iSWAP-{theta_oracle}').control(1)
     return gate
 
@@ -251,16 +266,16 @@ if __name__ == "__main__":
     exp_id = exp_id_list[0]
     hypothesis = hypothesis_list[1]
     
-    smallest_div = np.pi/20
+    smallest_div = np.pi/40
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
         theta_x_list = [0.0]
     elif hypothesis == "iswap":
         if exp_id == 'ctrl-param-iswap':
             theta_oracle_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
-            theta_x_list = [np.pi]
+            theta_x_list = [np.pi/2]
         elif exp_id == 'ctrl-swap':
-            theta_oracle_list = [np.pi]
+            theta_oracle_list = [np.pi/2]
             theta_x_list = np.arange(0, 2*np.pi + smallest_div , smallest_div)
 
     

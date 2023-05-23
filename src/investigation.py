@@ -283,7 +283,9 @@ def practical_case_error_prob():
     if hypothesis == "identity":
         theta_oracle_list = [0.0]
     elif hypothesis == "iswap":
+        # theta_oracle_list = np.arange(0, 2*np.pi + smallest_div, smallest_div)
         theta_oracle_list = np.arange(0, 2*np.pi + smallest_div, smallest_div)
+        # theta_x_list = np.arange(0, 2*np.pi + smallest_div, smallest_div)
         theta_x_list = np.arange(0, 2*np.pi + smallest_div, smallest_div)
     
     
@@ -293,13 +295,15 @@ def practical_case_error_prob():
     list_err_data = []
     list_angle = []
     for theta_oracle in theta_oracle_list:
-        for theta_ctrl in [np.pi]:
+        for theta_ctrl in [np.pi/2]:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
             prob = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl, exp_id=exp_id_list[0])
+            print(prob)
             list_angle.append(theta_oracle)
+
             list_err_data.append(prob)
 
-    ax1.plot(list_angle, list_err_data, 'b-o', label = "$\\theta_\\textrm{ctrl} = \\pi$, variation with \\textit{Oracle} = $\\textrm{iSWAP}(\\theta_\\textrm{orc})$", markerfacecolor='none')
+    ax1.plot(list_angle, list_err_data, 'b-o', label = "$\\theta_\\textrm{ctrl} = \\pi/2$, variation with \\textit{Oracle} = $\\textrm{CSWAP}(\\theta_\\textrm{orc})$", markerfacecolor='none')
     ax1.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax1.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 24))
     ax1.xaxis.set_major_formatter(plt.FuncFormatter(multiple_formatter()))
@@ -310,7 +314,7 @@ def practical_case_error_prob():
     list_err_data = []
     list_angle = []
     for theta_ctrl in theta_x_list:
-        for theta_oracle in [np.pi]:
+        for theta_oracle in [np.pi/2]:
             theta_oracle, theta_ctrl = round(theta_oracle, 3), round(theta_ctrl, 3)
             prob = distinguishing_probability(hypothesis, 'none', theta_oracle, theta_ctrl, exp_id=exp_id_list[1])
             # print(prob)
@@ -323,8 +327,8 @@ def practical_case_error_prob():
     ax1.set_xlabel('$\\theta$')
     plt.legend(bbox_to_anchor = (0.98, 1.25))
     # fig.tight_layout()
-    plt.show()
-    exit()
+    # plt.show()
+    # exit()
     plt.savefig('plot/prac_prob_vs_thetas.pdf')
     plt.savefig('plot/prac_prob_vs_thetas.png')
 
@@ -386,8 +390,8 @@ def prac_prob_err_3d():
 
 
 if __name__ == "__main__":
-    # practical_case_error_prob()
-    # exit()
+    practical_case_error_prob()
+    exit()
 
     # prac_prob_err_3d()
     # exit()

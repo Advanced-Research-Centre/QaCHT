@@ -2,7 +2,26 @@ from qiskit import *
 import numpy
 from qiskit.quantum_info import partial_trace
 theta = numpy.pi/2
+theta_oracle = numpy.pi/2
+circuit =  QuantumCircuit(2)
+circuit.rxx(theta_oracle, 0, 1)
+circuit.ryy(theta_oracle, 0, 1)
+circuit.sx(1)
+circuit.rxx(theta_oracle, 0, 1)
+circuit.ryy(theta_oracle, 0, 1)
+circuit.sx(0)
+circuit.rxx(theta_oracle, 0, 1)
+circuit.ryy(theta_oracle, 0, 1)
+circuit.sx(1)
 
+backend = Aer.get_backend('unitary_simulator')
+job = execute(circuit, backend, shots=8192)
+result = job.result()
+
+print(result.get_unitary(circuit,3))
+
+
+exit()
 register_size = 4
 swap = QuantumCircuit(2)
 def oracle(theta):
